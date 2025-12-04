@@ -1,0 +1,28 @@
+@startuml
+!define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
+
+Table(Usuarios, "Usuarios") {
+  +id : Long
+  nombre : VARCHAR
+  passwordHash : VARCHAR  
+}
+
+Table(TokenSessions, "TokenSessions") {
+  +id : Long
+  token : VARCHAR
+  usuario_id : Long
+  fecha_expiracion : DATETIME
+  estado: BOOLEAN
+}
+
+Table(TokenRefresh, "TokenRefresh") {
+  +id : Long
+  token : VARCHAR
+  usuario_id : Long
+  estado: BOOLEAN
+}
+
+Usuarios "1" -- "0..*" TokenSessiones : tiene >
+Usuarios "1" -- "0..*" TokenRefresh : tiene >
+
+@enduml
