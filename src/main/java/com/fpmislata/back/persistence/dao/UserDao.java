@@ -1,6 +1,6 @@
-package com.fpmislata.back.persitence.dao;
+package com.fpmislata.back.persistence.dao;
 
-import com.fpmislata.back.persitence.dao.impl.entity.UserJpaEntity;
+import com.fpmislata.back.persistence.dao.impl.entity.UserJpaEntity;
 
 public interface UserDao extends GenericDao<UserJpaEntity> {
     UserJpaEntity getByName(String name);

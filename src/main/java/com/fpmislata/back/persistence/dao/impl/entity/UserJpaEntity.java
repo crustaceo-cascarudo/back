@@ -1,4 +1,4 @@
-package com.fpmislata.back.persitence.dao.impl.entity;
+package com.fpmislata.back.persistence.dao.impl.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

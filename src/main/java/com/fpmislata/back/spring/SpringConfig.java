@@ -1,6 +1,6 @@
 package com.fpmislata.back.spring;
 
-import org.springframework.boot.persistence.autoconfigure.EntityScan;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,13 +8,14 @@ import com.fpmislata.back.domain.repository.UserRepository;
 import com.fpmislata.back.domain.service.UserService;
 import com.fpmislata.back.domain.service.impl.UserServiceImpl;
 import com.fpmislata.back.infrastructure.PasswordEncoderImpl;
-import com.fpmislata.back.persitence.dao.UserDao;
-import com.fpmislata.back.persitence.dao.impl.UserDaoJpa;
-import com.fpmislata.back.persitence.repository.impl.UserRepositoryImpl;
+import com.fpmislata.back.persistence.dao.UserDao;
+import com.fpmislata.back.persistence.dao.impl.UserDaoJpa;
+import com.fpmislata.back.persistence.repository.impl.UserRepositoryImpl;
 
 @Configuration
-@EntityScan(basePackages = { "com.fpmislata.back.persitence.dao.impl.entity" })
+@EntityScan(basePackages = "com.fpmislata.back.persistence.dao.impl.entity")
 public class SpringConfig {
+
     @Bean
     public UserDao userDao() {
         return new UserDaoJpa();
@@ -28,6 +29,11 @@ public class SpringConfig {
     @Bean
     public UserService userService(UserRepository userRepository, PasswordEncoderImpl passwordEncoderImpl) {
         return new UserServiceImpl(userRepository, passwordEncoderImpl);
+    }
+
+    @Bean
+    public PasswordEncoderImpl passwordEncoderImpl() {
+        return new PasswordEncoderImpl();
     }
 
 }

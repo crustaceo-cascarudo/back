@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.0</version>
+		<version>3.5.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.fpmislata</groupId>
@@ -40,11 +40,13 @@
 
 	<properties>
 		<java.version>21</java.version>
-		<spring.boot.version>3.5.6</spring.boot.version>
+		<spring.boot.version>3.5.8</spring.boot.version>
 		<org.instancio.version>5.5.1</org.instancio.version>
 		<com.fasterxml.jackson.version>2.20.1</com.fasterxml.jackson.version>
 		<org.flywaydb.version>11.17.0</org.flywaydb.version>
 		<com.h2database.version>2.3.232</com.h2database.version>
+		<jakarta.validation.version>3.1.1</jakarta.validation.version>
+		<jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
 	</properties>
 	<dependencies>
 		<dependency>

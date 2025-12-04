@@ -1,12 +1,12 @@
-package com.fpmislata.back.persitence.repository.impl;
+package com.fpmislata.back.persistence.repository.impl;
 
 import java.util.Optional;
 
 import com.fpmislata.back.domain.repository.UserRepository;
 import com.fpmislata.back.domain.repository.entity.UserEntity;
-import com.fpmislata.back.persitence.dao.UserDao;
-import com.fpmislata.back.persitence.dao.impl.entity.UserJpaEntity;
-import com.fpmislata.back.persitence.repository.mapper.UserMapper;
+import com.fpmislata.back.persistence.dao.UserDao;
+import com.fpmislata.back.persistence.dao.impl.entity.UserJpaEntity;
+import com.fpmislata.back.persistence.repository.mapper.UserMapper;
 
 public class UserRepositoryImpl implements UserRepository {
 

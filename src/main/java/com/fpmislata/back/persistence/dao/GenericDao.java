@@ -1,4 +1,4 @@
-package com.fpmislata.back.persitence.dao;
+package com.fpmislata.back.persistence.dao;
 
 public interface GenericDao<T>{
     Long insert(T jpaEntity);

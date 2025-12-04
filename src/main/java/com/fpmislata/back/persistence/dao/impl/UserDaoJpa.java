@@ -1,20 +1,15 @@
-package com.fpmislata.back.persitence.dao.impl;
+package com.fpmislata.back.persistence.dao.impl;
 
 import java.util.UUID;
 
-import org.springframework.stereotype.Repository;
-
-import com.fpmislata.back.persitence.dao.UserDao;
-import com.fpmislata.back.persitence.dao.impl.entity.SessionTokenJpaEntity;
-import com.fpmislata.back.persitence.dao.impl.entity.UserJpaEntity;
+import com.fpmislata.back.persistence.dao.UserDao;
+import com.fpmislata.back.persistence.dao.impl.entity.SessionTokenJpaEntity;
+import com.fpmislata.back.persistence.dao.impl.entity.UserJpaEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 
-@Repository
-@Transactional
 public class UserDaoJpa implements UserDao {
 
     @PersistenceContext
