@@ -23,10 +23,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserDto userDto) {
         Optional<UserDto> existingUser = findById(userDto.id());
+        Optional<UserDto> existingUserByName = findByName(userDto.name());
         if (existingUser.isPresent()) {
             throw new IllegalArgumentException("User with id " + userDto.id() + " already exists.");
         }
-        if (userDto.name() == existingUser.map(UserDto::name).orElse(null)) {
+        if (userDto.name() == existingUserByName.map(UserDto::name).orElse(null)) {
             throw new IllegalArgumentException("User with name " + userDto.name() + " already exists.");
         }
         String hashedpassword = passwordEncoderService.encode(userDto.password());

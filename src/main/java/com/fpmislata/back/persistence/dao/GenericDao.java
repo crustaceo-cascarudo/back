@@ -1,9 +1,15 @@
 package com.fpmislata.back.persistence.dao;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface GenericDao<T>{
-    Long insert(T jpaEntity);
-    T getById(Long id);
-    void update(T jpaEntity);
+    List<T> findAll(int pageNumber, int pageSize);
+    T insert(T jpaEntity);
+    Optional<T> findById(Long id);
+    Optional<T> findByName(String name);
+     T update(T jpaEntity);
     void delete(Long id);
+    long count();
     
 }

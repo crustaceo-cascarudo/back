@@ -1,5 +1,7 @@
 package com.fpmislata.back.persistence.dao.impl;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.fpmislata.back.persistence.dao.UserDao;
@@ -16,18 +18,6 @@ public class UserDaoJpa implements UserDao {
     private EntityManager entityManager;
 
     @Override
-    public UserJpaEntity getByName(String name) {
-        try {
-            String jpql = "SELECT u FROM UserJpaEntity u WHERE u.name = :name";
-            return entityManager.createQuery(jpql, UserJpaEntity.class)
-                    .setParameter("name", name)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
     public void delete(Long id) {
         UserJpaEntity entity = entityManager.find(UserJpaEntity.class, id);
         if (entity != null) {
@@ -36,20 +26,32 @@ public class UserDaoJpa implements UserDao {
     }
 
     @Override
-    public UserJpaEntity getById(Long id) {
-        return entityManager.find(UserJpaEntity.class, id);
+    public Optional<UserJpaEntity> findByName(String name) {
+        try {
+            String jpql = "SELECT u FROM UserJpaEntity u WHERE u.name = :name";
+            return Optional.of(entityManager.createQuery(jpql, UserJpaEntity.class)
+                    .setParameter("name", name)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public Long insert(UserJpaEntity userJpaEntity) {
+    public Optional<UserJpaEntity> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(UserJpaEntity.class, id));
+    }
+
+    @Override
+    public UserJpaEntity insert(UserJpaEntity userJpaEntity) {
         entityManager.persist(userJpaEntity);
         entityManager.flush();
-        return userJpaEntity.getId();
+        return userJpaEntity;
     }
 
     @Override
-    public void update(UserJpaEntity userJpaEntity) {
-        entityManager.merge(userJpaEntity);
+    public UserJpaEntity update(UserJpaEntity userJpaEntity) {
+        return entityManager.merge(userJpaEntity);
     }
 
     @Override
@@ -63,5 +65,17 @@ public class UserDaoJpa implements UserDao {
 
         return token;
     }
+
+    @Override
+    public long count() {
+        return 0;
+    }
+
+    @Override
+    public List<UserJpaEntity> findAll(int pageNumber, int pageSize) {
+        return null;
+    }
+
+    
 
 }

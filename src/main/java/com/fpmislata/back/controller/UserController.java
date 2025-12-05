@@ -2,7 +2,6 @@ package com.fpmislata.back.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.fpmislata.back.controller.mapper.UserMapper;
@@ -13,15 +12,25 @@ import com.fpmislata.back.controller.webModel.response.UserResponse;
 import com.fpmislata.back.domain.service.UserService;
 import com.fpmislata.back.domain.service.dto.UserDto;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
-@Validated
 public class UserController {
 
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserDto> users = userService.findAll();
+        List<UserResponse> response = users.stream()
+                .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")

@@ -23,35 +23,36 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<UserEntity> findById(Long id) {
-        UserJpaEntity jpaEntity = userDao.getById(id);
+        UserJpaEntity jpaEntity = userDao.findById(id).orElse(null);
         UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(jpaEntity);
         return Optional.ofNullable(entity);
     }
 
     @Override
     public Optional<UserEntity> findByName(String name) {
-        UserJpaEntity jpaEntity = userDao.getByName(name);
+        UserJpaEntity jpaEntity = userDao.findByName(name).orElse(null);
         UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(jpaEntity);
         return Optional.ofNullable(entity);
     }
 
     @Override
     public UserEntity logByName(String name) {
-        UserJpaEntity jpaEntity = userDao.getByName(name);
+        UserJpaEntity jpaEntity = userDao.findByName(name).orElse(null);
         return UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(jpaEntity);
     }
 
     @Override
-    public Long save(UserEntity userEntity) {
+    public UserEntity save(UserEntity userEntity) {
         UserJpaEntity jpaEntity = UserMapper.getInstance().fromUserEntitytoJpaEntity(userEntity);        
         if (userEntity.id() != null) {
-            UserJpaEntity existingEntity = userDao.getById(userEntity.id());
+            UserJpaEntity existingEntity = userDao.findById(userEntity.id()).orElse(null);
             if (existingEntity != null) {
                 userDao.update(jpaEntity);
-                return userEntity.id();
+                return userEntity;
             }
         }
-        return userDao.insert(jpaEntity);
+        return UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(
+            userDao.insert(jpaEntity));
     }
 
     @Override
