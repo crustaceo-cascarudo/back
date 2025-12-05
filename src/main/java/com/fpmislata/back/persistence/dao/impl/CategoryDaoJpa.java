@@ -9,6 +9,7 @@ import com.fpmislata.back.persistence.dao.impl.entity.CategoryJpaEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 public class CategoryDaoJpa implements CategoryDao {
 
@@ -30,6 +31,7 @@ public class CategoryDaoJpa implements CategoryDao {
                 .getResultList();
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         CategoryJpaEntity entity = entityManager.find(CategoryJpaEntity.class, id);
@@ -59,12 +61,14 @@ public class CategoryDaoJpa implements CategoryDao {
         }
     }
 
+    @Transactional
     @Override
     public CategoryJpaEntity insert(CategoryJpaEntity jpaEntity) {
         entityManager.persist(jpaEntity);
         return jpaEntity;
     }
 
+    @Transactional
     @Override
     public CategoryJpaEntity update(CategoryJpaEntity jpaEntity) {
         return entityManager.merge(jpaEntity);

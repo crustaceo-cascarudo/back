@@ -24,21 +24,21 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<UserEntity> findById(Long id) {
         UserJpaEntity jpaEntity = userDao.findById(id).orElse(null);
-        UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(jpaEntity);
+        UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntity);
         return Optional.ofNullable(entity);
     }
 
     @Override
     public Optional<UserEntity> findByName(String name) {
         UserJpaEntity jpaEntity = userDao.findByName(name).orElse(null);
-        UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(jpaEntity);
+        UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntity);
         return Optional.ofNullable(entity);
     }
 
     @Override
     public UserEntity logByName(String name) {
         UserJpaEntity jpaEntity = userDao.findByName(name).orElse(null);
-        return UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(jpaEntity);
+        return UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntity);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class UserRepositoryImpl implements UserRepository {
                 return userEntity;
             }
         }
-        return UserMapper.getInstance().fromUserJpaEntityfromJpaEntity(
+        return UserMapper.getInstance().fromUserJpaEntityfromEntity(
             userDao.insert(jpaEntity));
     }
 
