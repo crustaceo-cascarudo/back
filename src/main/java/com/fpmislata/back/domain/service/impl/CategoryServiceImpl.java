@@ -19,27 +19,24 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
-        Optional<CategoryDto> existingCategory = Optional.of(findById(categoryDto.id()));
-        Optional<CategoryDto> existingCategoryByName = Optional.ofNullable(findByName(categoryDto.name()));
-        if (existingCategory.isPresent()) {
-            throw new IllegalArgumentException("Category with id " + categoryDto.id() + " already exists.");
-        }
-        if (existingCategoryByName.map(CategoryDto::name).orElse(null) == categoryDto.name()) {
+        List<CategoryDto> existingCategoryByName = findByName(categoryDto.name());
+        if (!existingCategoryByName.isEmpty()) {
             throw new IllegalArgumentException("Category with name " + categoryDto.name() + " already exists.");
         }
         CategoryEntity categoryEntity = CategoryMapper.getInstance()
                 .fromCategoryToCategoryEntity(CategoryMapper.getInstance().fromCategoryDtoToCategory(categoryDto));
         categoryRepository.save(categoryEntity);
-        return CategoryMapper.getInstance().fromCategoryToCategoryDto(CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity));
+        return CategoryMapper.getInstance()
+                .fromCategoryToCategoryDto(CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity));
     }
 
     @Override
-    public CategoryDto findByName(String name) {
-        Optional<CategoryEntity> categoryEntity = categoryRepository.findByName(name);
-        if (categoryEntity.isEmpty()) {
-            throw new IllegalArgumentException("Category with name " + name + " does not exist.");
-        }
-        return CategoryMapper.getInstance().fromCategoryToCategoryDto(CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity.get()));
+    public List<CategoryDto> findByName(String name) {
+        List<CategoryEntity> categoryEntities = categoryRepository.findByName(name);
+        return categoryEntities.stream()
+                .map(CategoryMapper.getInstance()::fromCategoryEntityToCategory)
+                .map(CategoryMapper.getInstance()::fromCategoryToCategoryDto)
+                .toList();
     }
 
     @Override
@@ -48,9 +45,8 @@ public class CategoryServiceImpl implements CategoryService {
         if (existingCategory.isEmpty()) {
             throw new IllegalArgumentException("Category with id " + id + " does not exist.");
         }
-        categoryRepository.delete(id);        
+        categoryRepository.delete(id);
     }
-
 
     @Override
     public Page<CategoryDto> findAll(int pageNumber, int pageSize) {
@@ -58,14 +54,15 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IllegalArgumentException("Invalid page number or page size.");
         }
         Page<CategoryEntity> CategoryPageEntity = categoryRepository.findAllPaged(pageNumber, pageSize);
-        
+
         List<CategoryDto> content = CategoryPageEntity.data()
-        .stream()
+                .stream()
                 .map(CategoryMapper.getInstance()::fromCategoryEntityToCategory)
                 .map(CategoryMapper.getInstance()::fromCategoryToCategoryDto)
                 .toList();
-        return new Page<>(content, CategoryPageEntity.pageNumber(), CategoryPageEntity.pageSize(), CategoryPageEntity.totalElements());
-        }
+        return new Page<>(content, CategoryPageEntity.pageNumber(), CategoryPageEntity.pageSize(),
+                CategoryPageEntity.totalElements());
+    }
 
     @Override
     public CategoryDto findById(Long id) {
@@ -73,8 +70,10 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryEntity.isEmpty()) {
             throw new IllegalArgumentException("Category with id " + id + " does not exist.");
         }
-        return CategoryMapper.getInstance().fromCategoryToCategoryDto(CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity.get()));
+        return CategoryMapper.getInstance().fromCategoryToCategoryDto(
+                CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity.get()));
     }
+
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
         Optional<CategoryDto> existingCategory = Optional.of(findById(categoryDto.id()));
@@ -84,8 +83,8 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity categoryEntity = CategoryMapper.getInstance()
                 .fromCategoryToCategoryEntity(CategoryMapper.getInstance().fromCategoryDtoToCategory(categoryDto));
         categoryRepository.save(categoryEntity);
-        return CategoryMapper.getInstance().fromCategoryToCategoryDto(CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity));
+        return CategoryMapper.getInstance()
+                .fromCategoryToCategoryDto(CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity));
     }
-    
 
 }

@@ -38,21 +38,22 @@ public class CategoryController {
     public ResponseEntity<Page<SummaryCategoryResponse>> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        
+
         Page<CategoryDto> categoryPage = categoryService.findAll(page, size);
-        
-        List<SummaryCategoryResponse> categoryResponses = categoryPage.data().stream().map(CategoryMapper::fromCategoryDtoToSummaryCategoryResponse).toList();
-        
+
+        List<SummaryCategoryResponse> categoryResponses = categoryPage.data().stream()
+                .map(CategoryMapper::fromCategoryDtoToSummaryCategoryResponse).toList();
+
         Page<SummaryCategoryResponse> response = new Page<>(
                 categoryResponses,
                 categoryPage.pageNumber(),
                 categoryPage.pageSize(),
                 categoryPage.totalElements(),
-                categoryPage.totalPages()
-        );
-        
+                categoryPage.totalPages());
+
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<DetailCategoryResponse> getById(@PathVariable Long id) {
         CategoryDto categoryDto = categoryService.findById(id);
@@ -60,10 +61,19 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<DetailCategoryResponse>> findByName(@RequestParam String name) {
+        List<CategoryDto> category = categoryService.findByName(name);
+        List<DetailCategoryResponse> response = category.stream()
+                .map(CategoryMapper::fromCategoryDtoToDetailCategoryResponse)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("")
     public ResponseEntity<DetailCategoryResponse> create(
             @RequestBody @Validated InsertCategoryRequest request) {
-        
+
         CategoryDto categoryDto = CategoryMapper.getInstance()
                 .fromInsertRequestToCategoryDto(request);
         CategoryDto createdCategory = categoryService.create(categoryDto);
@@ -75,15 +85,14 @@ public class CategoryController {
     public ResponseEntity<DetailCategoryResponse> update(
             @PathVariable Long id,
             @RequestBody @Validated UpdateCategoryRequest request) {
-        
+
         UpdateCategoryRequest updatedRequest = new UpdateCategoryRequest(
                 id,
                 request.name(),
                 request.slug(),
                 request.description(),
-                request.estado()
-        );
-        
+                request.estado());
+
         CategoryDto categoryDto = CategoryMapper.getInstance()
                 .fromUpdateRequestToCategoryDto(updatedRequest);
         CategoryDto updatedCategory = categoryService.update(categoryDto);
@@ -97,5 +106,4 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    
 }

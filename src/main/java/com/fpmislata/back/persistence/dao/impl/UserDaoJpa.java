@@ -11,7 +11,6 @@ import com.fpmislata.back.persistence.dao.impl.entity.SessionTokenJpaEntity;
 import com.fpmislata.back.persistence.dao.impl.entity.UserJpaEntity;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 
 public class UserDaoJpa implements UserDao {
@@ -29,15 +28,11 @@ public class UserDaoJpa implements UserDao {
     }
 
     @Override
-    public Optional<UserJpaEntity> findByName(String name) {
-        try {
-            String jpql = "SELECT u FROM UserJpaEntity u WHERE u.name = :name";
-            return Optional.of(entityManager.createQuery(jpql, UserJpaEntity.class)
-                    .setParameter("name", name)
-                    .getSingleResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
+    public List<UserJpaEntity> findByName(String name) {
+        String jpql = "SELECT u FROM UserJpaEntity u WHERE LOWER(u.name) LIKE LOWER(:name)";
+        return entityManager.createQuery(jpql, UserJpaEntity.class)
+                .setParameter("name", "%" + name + "%")
+                .getResultList();
     }
 
     @Override

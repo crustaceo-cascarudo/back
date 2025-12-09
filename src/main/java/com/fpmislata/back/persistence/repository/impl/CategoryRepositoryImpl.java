@@ -10,7 +10,7 @@ import com.fpmislata.back.persistence.dao.CategoryDao;
 import com.fpmislata.back.persistence.dao.impl.entity.CategoryJpaEntity;
 import com.fpmislata.back.persistence.repository.mapper.CategoryMapper;
 
-public class CategoryRepositoryImpl implements CategoryRepository{
+public class CategoryRepositoryImpl implements CategoryRepository {
 
     private final CategoryDao categoryDao;
 
@@ -35,21 +35,21 @@ public class CategoryRepositoryImpl implements CategoryRepository{
     @Override
     public Optional<CategoryEntity> findById(Long id) {
         return categoryDao.findById(id)
-            .map(CategoryMapper.getInstance()::fromCategoryJpaEntityToEntity);
+                .map(CategoryMapper.getInstance()::fromCategoryJpaEntityToEntity);
     }
 
-    
-
     @Override
-    public Optional<CategoryEntity> findByName(String name) {
-        CategoryJpaEntity jpaEntity = categoryDao.findByName(name).orElse(null);
-        CategoryEntity entity = CategoryMapper.getInstance().fromCategoryJpaEntityToEntity(jpaEntity);
-        return Optional.ofNullable(entity);
+    public List<CategoryEntity> findByName(String name) {
+        List<CategoryJpaEntity> jpaEntities = categoryDao.findByName(name).stream().toList();
+        return jpaEntities.stream()
+                .map(CategoryMapper.getInstance()::fromCategoryJpaEntityToEntity)
+                .toList();
     }
 
     @Override
     public CategoryEntity save(CategoryEntity categoryEntity) {
-        CategoryJpaEntity categoryJpaEntity = CategoryMapper.getInstance().fromCategoryEntityToJpaEntity(categoryEntity);
+        CategoryJpaEntity categoryJpaEntity = CategoryMapper.getInstance()
+                .fromCategoryEntityToJpaEntity(categoryEntity);
         if (categoryEntity.id() != null) {
             CategoryJpaEntity existingEntity = categoryDao.findById(categoryEntity.id()).orElse(null);
             if (existingEntity != null) {
@@ -58,9 +58,7 @@ public class CategoryRepositoryImpl implements CategoryRepository{
             }
         }
         return CategoryMapper.getInstance().fromCategoryJpaEntityToEntity(
-            categoryDao.insert(categoryJpaEntity)
-        );
+                categoryDao.insert(categoryJpaEntity));
     }
-    
 
 }

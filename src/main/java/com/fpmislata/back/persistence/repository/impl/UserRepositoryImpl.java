@@ -37,21 +37,30 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<UserEntity> findByName(String name) {
-        UserJpaEntity jpaEntity = userDao.findByName(name).orElse(null);
-        UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntity);
-        return Optional.ofNullable(entity);
+    public List<UserEntity> findByName(String name) {
+        List<UserJpaEntity> jpaEntities = userDao.findByName(name).
+                stream().toList();
+        if (jpaEntities.isEmpty()) {
+            return List.of();
+        }
+        return jpaEntities.stream()
+                .map(UserMapper.getInstance()::fromUserJpaEntityfromEntity)
+                .toList();
     }
 
     @Override
     public UserEntity logByName(String name) {
-        UserJpaEntity jpaEntity = userDao.findByName(name).orElse(null);
-        return UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntity);
+        List<UserJpaEntity> jpaEntities = userDao.findByName(name).
+                stream().toList();
+        if (jpaEntities.isEmpty()) {
+            return null;
+        }
+        return UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntities.get(0));
     }
 
     @Override
     public UserEntity save(UserEntity userEntity) {
-        UserJpaEntity jpaEntity = UserMapper.getInstance().fromUserEntitytoJpaEntity(userEntity);        
+        UserJpaEntity jpaEntity = UserMapper.getInstance().fromUserEntitytoJpaEntity(userEntity);
         if (userEntity.id() != null) {
             UserJpaEntity existingEntity = userDao.findById(userEntity.id()).orElse(null);
             if (existingEntity != null) {
@@ -60,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
         }
         return UserMapper.getInstance().fromUserJpaEntityfromEntity(
-            userDao.insert(jpaEntity));
+                userDao.insert(jpaEntity));
     }
 
     @Override

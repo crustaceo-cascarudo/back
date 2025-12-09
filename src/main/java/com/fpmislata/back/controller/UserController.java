@@ -44,10 +44,11 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginUserRequest request) {
         String token = userService.logByName(request.name(), request.plainPassword());
-        UserDto userDto = userService.findByName(request.name())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        UserResponse userResponse = UserMapper.getInstance().fromUserDtoToUserResponse(userDto);
+        List<UserDto> users = userService.findByName(request.name());
+        if (users.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+        UserResponse userResponse = UserMapper.getInstance().fromUserDtoToUserResponse(users.get(0));
         LoginResponse response = new LoginResponse(token, userResponse);
         return ResponseEntity.ok(response);
     }
@@ -58,6 +59,15 @@ public class UserController {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 
         UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(userDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserResponse>> findByName(@RequestParam String name) {
+        List<UserDto> users = userService.findByName(name);
+        List<UserResponse> response = users.stream()
+                .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
+                .toList();
         return ResponseEntity.ok(response);
     }
 
@@ -79,4 +89,5 @@ public class UserController {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }

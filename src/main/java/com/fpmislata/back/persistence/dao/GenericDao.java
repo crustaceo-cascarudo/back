@@ -7,7 +7,7 @@ public interface GenericDao<T>{
     List<T> findAll(int pageNumber, int pageSize);
     T insert(T jpaEntity);
     Optional<T> findById(Long id);
-    Optional<T> findByName(String name);
+    List<T> findByName(String name);
      T update(T jpaEntity);
     void delete(Long id);
     long count();

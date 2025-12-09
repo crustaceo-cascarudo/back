@@ -7,7 +7,6 @@ import com.fpmislata.back.persistence.dao.CategoryDao;
 import com.fpmislata.back.persistence.dao.impl.entity.CategoryJpaEntity;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
@@ -37,7 +36,7 @@ public class CategoryDaoJpa implements CategoryDao {
         CategoryJpaEntity entity = entityManager.find(CategoryJpaEntity.class, id);
         if (entity != null) {
             entityManager.remove(entity);
-        }        
+        }
     }
 
     @Override
@@ -50,15 +49,11 @@ public class CategoryDaoJpa implements CategoryDao {
     }
 
     @Override
-    public Optional<CategoryJpaEntity> findByName(String name) {
-        try {
-            String jpql = "SELECT c FROM CategoryJpaEntity c WHERE c.name = :name";
-            return Optional.of(entityManager.createQuery(jpql, CategoryJpaEntity.class)
-                    .setParameter("name", name)
-                    .getSingleResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
+    public List<CategoryJpaEntity> findByName(String name) {
+        String jpql = "SELECT c FROM CategoryJpaEntity c WHERE LOWER(c.name) LIKE LOWER(:name)";
+        return entityManager.createQuery(jpql, CategoryJpaEntity.class)
+                .setParameter("name", "%" + name + "%")
+                .getResultList();
     }
 
     @Transactional
@@ -74,5 +69,4 @@ public class CategoryDaoJpa implements CategoryDao {
         return entityManager.merge(jpaEntity);
     }
 
-    
 }

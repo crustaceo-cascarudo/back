@@ -22,8 +22,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        Optional<UserDto> existingUserByName = findByName(userDto.name());
-        if (existingUserByName.isPresent()) {
+        List<UserDto> existingUsersByName = findByName(userDto.name());
+        if (!existingUsersByName.isEmpty()) {
             throw new IllegalArgumentException("User with name " + userDto.name() + " already exists.");
         }
         String hashedpassword = passwordEncoderService.encode(userDto.plainPassword());
@@ -65,17 +65,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String logByName(String name, String password) {
-        Optional<UserDto> existingUser = findByName(name);
-        if (existingUser.isEmpty()) {
+        List<UserDto> existingUsers = findByName(name);
+        if (existingUsers.isEmpty()) {
             throw new IllegalArgumentException("User with name " + name + " does not exist.");
         }
-        boolean passwordMatches = passwordEncoderService.verify(password, existingUser.get().passwordHash());
+        boolean passwordMatches = passwordEncoderService.verify(password, existingUsers.get(0).passwordHash());
         if (!passwordMatches) {
             throw new IllegalArgumentException("Incorrect password for user " + name + ".");
         }
 
         // Crear token de sesión
-        String sessionToken = userRepository.createSessionToken(existingUser.get().id());
+        String sessionToken = userRepository.createSessionToken(existingUsers.get(0).id());
 
         // Devolver DTO con usuario y token
         return sessionToken;
@@ -89,10 +89,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findByName(String name) {
-        return userRepository.findByName(name)
+    public List<UserDto> findByName(String name) {
+        return userRepository.findByName(name).stream()
                 .map(UserMapper.getInstance()::fromUserEntityToUser)
-                .map(UserMapper.getInstance()::fromUserToUserDto);
+                .map(UserMapper.getInstance()::fromUserToUserDto)
+                .toList();
     }
 
     @Override
