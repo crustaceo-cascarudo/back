@@ -74,12 +74,17 @@ public class UserDaoJpa implements UserDao {
 
     @Override
     public long count() {
-        return 0;
+        return entityManager.createQuery("SELECT COUNT(u) FROM UserJpaEntity u", Long.class)
+                .getSingleResult();
     }
 
     @Override
     public List<UserJpaEntity> findAll(int pageNumber, int pageSize) {
-        return null;
+        int pageIndex = Math.max(pageNumber - 1, 0);
+        return entityManager.createQuery("SELECT u FROM UserJpaEntity u", UserJpaEntity.class)
+                .setFirstResult(pageIndex * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
 }

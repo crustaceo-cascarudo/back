@@ -26,8 +26,7 @@ public class UserMapper {
                 user.getName(),
                 null,
                 user.getPasswordHash(),
-                user.getRole()
-        );
+                user.getRole());
     }
 
     public User fromUserDtoToUser(UserDto userDto) {
@@ -37,9 +36,8 @@ public class UserMapper {
         return new User(
                 userDto.id(),
                 userDto.name(),
-                userDto.password(),
-                userDto.role()
-        );
+                userDto.passwordHash(),
+                userDto.role());
     }
 
     public UserEntity fromUserToUserEntity(User user) {
@@ -50,8 +48,7 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getPasswordHash(),
-                user.getRole()
-        );
+                user.getRole());
     }
 
     public User fromUserEntityToUser(UserEntity userEntity) {
@@ -62,7 +59,6 @@ public class UserMapper {
                 userEntity.id(),
                 userEntity.name(),
                 userEntity.passwordHash(),
-                userEntity.role()
-        );
+                userEntity.role());
     }
 }

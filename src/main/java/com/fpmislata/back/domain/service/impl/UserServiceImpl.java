@@ -22,25 +22,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        Optional<UserDto> existingUser = findById(userDto.id());
         Optional<UserDto> existingUserByName = findByName(userDto.name());
-        if (existingUser.isPresent()) {
-            throw new IllegalArgumentException("User with id " + userDto.id() + " already exists.");
-        }
-        if (userDto.name() == existingUserByName.map(UserDto::name).orElse(null)) {
+        if (existingUserByName.isPresent()) {
             throw new IllegalArgumentException("User with name " + userDto.name() + " already exists.");
         }
-        String hashedpassword = passwordEncoderService.encode(userDto.password());
+        String hashedpassword = passwordEncoderService.encode(userDto.plainPassword());
         userDto = new UserDto(
-                userDto.id(),
+                null,
                 userDto.name(),
-                userDto.password(),
+                userDto.plainPassword(),
                 hashedpassword,
                 userDto.role());
         UserEntity userEntity = UserMapper.getInstance()
                 .fromUserToUserEntity(UserMapper.getInstance().fromUserDtoToUser(userDto));
-        userRepository.save(userEntity);
-        logByName(userDto.name(), userDto.password());
+        userEntity = userRepository.save(userEntity);
         return UserMapper.getInstance().fromUserToUserDto(UserMapper.getInstance().fromUserEntityToUser(userEntity));
     }
 
@@ -102,6 +97,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() {
-        return null;
+        return userRepository.findAll().stream()
+                .map(UserMapper.getInstance()::fromUserEntityToUser)
+                .map(UserMapper.getInstance()::fromUserToUserDto)
+                .toList();
     }
 }

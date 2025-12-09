@@ -1,5 +1,6 @@
 package com.fpmislata.back.persistence.repository.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.fpmislata.back.domain.repository.UserRepository;
@@ -19,6 +20,13 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(Long id) {
         userDao.delete(id);
+    }
+
+    @Override
+    public List<UserEntity> findAll() {
+        return userDao.findAll(0, 5).stream()
+                .map(UserMapper.getInstance()::fromUserJpaEntityfromEntity)
+                .toList();
     }
 
     @Override

@@ -43,7 +43,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginUserRequest request) {
-        String token = userService.logByName(request.name(), request.password());
+        String token = userService.logByName(request.name(), request.plainPassword());
         UserDto userDto = userService.findByName(request.name())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -67,7 +67,7 @@ public class UserController {
         UserDto updatedUser = userService.update(new UserDto(
                 id,
                 userDto.name(),
-                userDto.password(),
+                userDto.plainPassword(),
                 userDto.passwordHash(),
                 userDto.role()));
         UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(updatedUser);
