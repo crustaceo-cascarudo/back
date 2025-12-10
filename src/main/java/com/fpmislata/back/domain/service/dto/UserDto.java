@@ -1,7 +1,8 @@
 package com.fpmislata.back.domain.service.dto;
 
+import com.fpmislata.back.domain.enumerado.Role;
+
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 public record UserDto(
         Long id,
@@ -11,8 +12,7 @@ public record UserDto(
         String plainPassword,
         String passwordHash,
         @NotNull(message = "Role cannot be null") 
-        @Pattern(regexp = "^(ADMIN|NORMAL)$", message = "Role must be either ADMIN or NORMAL") 
-        String role
+        Role role
     ) {
 
 }

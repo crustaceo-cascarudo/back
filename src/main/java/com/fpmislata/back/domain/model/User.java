@@ -1,15 +1,17 @@
 package com.fpmislata.back.domain.model;
 
+import com.fpmislata.back.domain.enumerado.Role;
+
 public class User {
     private Long id;
     private String name;
     private String passwordHash;
-    private String role;
+    private Role role;
     
     public User() {
     }
 
-    public User(Long id, String name, String passwordHash, String role) {
+    public User(Long id, String name, String passwordHash, Role role) {
         this.id = id;
         this.name = name;
         this.passwordHash = passwordHash;
@@ -28,12 +30,12 @@ public class User {
         return passwordHash;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
     public Boolean checkIfAdminRole() {
-        return "ADMIN".equalsIgnoreCase(this.role);
+        return Role.ADMIN.equals(this.role);
     }
     
 }

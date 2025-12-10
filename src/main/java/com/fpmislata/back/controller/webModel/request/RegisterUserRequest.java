@@ -1,12 +1,11 @@
 package com.fpmislata.back.controller.webModel.request;
 
-import jakarta.validation.constraints.Pattern;
+import com.fpmislata.back.domain.enumerado.Role;
 
 public record RegisterUserRequest(
     String name,
     String password,
-    @Pattern(regexp = "^(ADMIN|NORMAL)$", message = "Role must be either ADMIN or NORMAL")
-    String role
+    Role role
 ) {
 
 }

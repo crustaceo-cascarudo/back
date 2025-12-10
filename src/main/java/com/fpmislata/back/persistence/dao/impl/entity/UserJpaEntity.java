@@ -1,5 +1,7 @@
 package com.fpmislata.back.persistence.dao.impl.entity;
 
+import com.fpmislata.back.domain.enumerado.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,12 +18,12 @@ public class UserJpaEntity {
     private String name;
     @Column(name = "password")
     private String passwordHash;
-    private String role;
+    private Role role;
     
     public UserJpaEntity() {
     }
 
-    public UserJpaEntity(Long id, String name, String passwordHash, String role) {
+    public UserJpaEntity(Long id, String name, String passwordHash, Role role) {
         this.id = id;
         this.name = name;
         this.passwordHash = passwordHash;
@@ -40,7 +42,7 @@ public class UserJpaEntity {
         return passwordHash;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
