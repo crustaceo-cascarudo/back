@@ -35,7 +35,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public Optional<CategoryEntity> findById(Long id) {
         return categoryDao.findById(id)
-                .map(CategoryMapper.getInstance()::fromCategoryJpaEntityToEntity);
+            .map(CategoryMapper.getInstance()::fromCategoryJpaEntityToEntity);
     }
 
     @Override
@@ -60,5 +60,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         return CategoryMapper.getInstance().fromCategoryJpaEntityToEntity(
                 categoryDao.insert(categoryJpaEntity));
     }
+    
 
 }

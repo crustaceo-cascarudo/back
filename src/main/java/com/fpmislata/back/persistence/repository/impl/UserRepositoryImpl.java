@@ -25,14 +25,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<UserEntity> findAll() {
         return userDao.findAll(0, 5).stream()
-                .map(UserMapper.getInstance()::fromUserJpaEntityfromEntity)
+                .map(UserMapper.getInstance()::fromUserJpaEntitytoUserEntity)
                 .toList();
     }
 
     @Override
     public Optional<UserEntity> findById(Long id) {
         UserJpaEntity jpaEntity = userDao.findById(id).orElse(null);
-        UserEntity entity = UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntity);
+        UserEntity entity = UserMapper.getInstance().fromUserJpaEntitytoUserEntity(jpaEntity);
         return Optional.ofNullable(entity);
     }
 
@@ -44,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
             return List.of();
         }
         return jpaEntities.stream()
-                .map(UserMapper.getInstance()::fromUserJpaEntityfromEntity)
+                .map(UserMapper.getInstance()::fromUserJpaEntitytoUserEntity)
                 .toList();
     }
 
@@ -55,12 +55,12 @@ public class UserRepositoryImpl implements UserRepository {
         if (jpaEntities.isEmpty()) {
             return null;
         }
-        return UserMapper.getInstance().fromUserJpaEntityfromEntity(jpaEntities.get(0));
+        return UserMapper.getInstance().fromUserJpaEntitytoUserEntity(jpaEntities.get(0));
     }
 
     @Override
     public UserEntity save(UserEntity userEntity) {
-        UserJpaEntity jpaEntity = UserMapper.getInstance().fromUserEntitytoJpaEntity(userEntity);
+        UserJpaEntity jpaEntity = UserMapper.getInstance().fromUserEntitytoJpaEntity(userEntity);        
         if (userEntity.id() != null) {
             UserJpaEntity existingEntity = userDao.findById(userEntity.id()).orElse(null);
             if (existingEntity != null) {
@@ -68,7 +68,7 @@ public class UserRepositoryImpl implements UserRepository {
                 return userEntity;
             }
         }
-        return UserMapper.getInstance().fromUserJpaEntityfromEntity(
+        return UserMapper.getInstance().fromUserJpaEntitytoUserEntity(
                 userDao.insert(jpaEntity));
     }
 

@@ -8,7 +8,7 @@ public interface GenericDao<T>{
     T insert(T jpaEntity);
     Optional<T> findById(Long id);
     List<T> findByName(String name);
-     T update(T jpaEntity);
+    T update(T jpaEntity);
     void delete(Long id);
     long count();
     

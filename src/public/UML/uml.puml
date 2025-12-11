@@ -25,4 +25,12 @@ Table(TokenRefresh, "TokenRefresh") {
 Usuarios "1" -- "0..*" TokenSessiones : tiene >
 Usuarios "1" -- "0..*" TokenRefresh : tiene >
 
+
+Table(Products, "Products") {
+  +id : Long
+  name : VARCHAR
+  base_price: Double
+  discount: Int
+  image: VARCHAR
+}
 @enduml

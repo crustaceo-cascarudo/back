@@ -1,5 +1,17 @@
 package com.fpmislata.back.spring;
 
+import com.fpmislata.back.domain.repository.IngredientRepository;
+import com.fpmislata.back.domain.repository.ProductRepository;
+import com.fpmislata.back.domain.service.IngredientService;
+import com.fpmislata.back.domain.service.ProductService;
+import com.fpmislata.back.domain.service.impl.IngredientServiceImpl;
+import com.fpmislata.back.domain.service.impl.ProductServiceImpl;
+import com.fpmislata.back.persistence.dao.IngredientDao;
+import com.fpmislata.back.persistence.dao.ProductDao;
+import com.fpmislata.back.persistence.dao.impl.IngredientDaoJpa;
+import com.fpmislata.back.persistence.dao.impl.ProductDaoJpa;
+import com.fpmislata.back.persistence.repository.impl.IngredientRepositoryImpl;
+import com.fpmislata.back.persistence.repository.impl.ProductRepositoryImpl;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,6 +77,31 @@ public class SpringConfig {
 
     // ----------------------------------------------
 
-    
+    //Product DAO Bean
 
+    @Bean
+    ProductDao productDao() {return new ProductDaoJpa();}
+
+    @Bean
+    ProductRepository productRepository(ProductDao productDao) {return new ProductRepositoryImpl(productDao);}
+
+    @Bean
+    ProductService productService(ProductRepository productRepository) {return new ProductServiceImpl(productRepository);}
+
+    // ----------------------------------------------
+
+    //Ingredient DAO Bean
+
+    @Bean
+    IngredientDao ingredientDao(){return new IngredientDaoJpa();}
+
+    @Bean
+    IngredientRepository ingredientRepository(IngredientDao ingredientDao){
+        return new IngredientRepositoryImpl(ingredientDao);
+    }
+
+    @Bean
+    IngredientService ingredientService(IngredientRepository ingredientRepository){
+        return new IngredientServiceImpl(ingredientRepository);
+    }
 }

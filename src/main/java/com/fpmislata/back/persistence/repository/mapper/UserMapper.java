@@ -28,7 +28,7 @@ public class UserMapper {
                 userEntity.role());
     }
 
-    public UserEntity fromUserJpaEntityfromEntity(UserJpaEntity jpaEntity) {
+    public UserEntity fromUserJpaEntitytoUserEntity(UserJpaEntity jpaEntity) {
         if (jpaEntity == null) {
             return null;
         }

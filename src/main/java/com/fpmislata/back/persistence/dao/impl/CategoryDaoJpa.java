@@ -50,10 +50,14 @@ public class CategoryDaoJpa implements CategoryDao {
 
     @Override
     public List<CategoryJpaEntity> findByName(String name) {
-        String jpql = "SELECT c FROM CategoryJpaEntity c WHERE LOWER(c.name) LIKE LOWER(:name)";
-        return entityManager.createQuery(jpql, CategoryJpaEntity.class)
-                .setParameter("name", "%" + name + "%")
-                .getResultList();
+        try {
+            String jpql = "SELECT c FROM CategoryJpaEntity c WHERE LOWER(c.name) LIKE LOWER(:name)";
+            return entityManager.createQuery(jpql, CategoryJpaEntity.class)
+                    .setParameter("name", name)
+                    .getResultList();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 
     @Transactional
