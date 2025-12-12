@@ -6,7 +6,7 @@ import com.fpmislata.back.domain.service.dto.ProductDto;
 import java.util.List;
 
 public interface ProductService {
-    Page<ProductDto> getAll(int page, int size);
+    Page<ProductDto> findAll(int page, int size);
     List<ProductDto> findByName(String name);
     ProductDto getById(Long id);
     ProductDto create(ProductDto productDto);

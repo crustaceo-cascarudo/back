@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
     }
     
     @Override
-    public Page<ProductDto> getAll(int page, int size) {
+    public Page<ProductDto> findAll(int page, int size) {
         Page<ProductEntity> productEntityPage = productRepository.findAll(page, size);
         List<ProductDto> productDtos = productEntityPage.data()
                 .stream()

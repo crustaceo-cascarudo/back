@@ -21,7 +21,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
     
     @Override
-    public Page<IngredientDto> getAll(int page, int size){
+    public Page<IngredientDto> findAll(int page, int size){
         Page<IngredientEntity> ingredientEntityPage = ingredientRepository.findAll(page, size);
         List<IngredientDto> ingredientDtos = ingredientEntityPage.data()
                 .stream()

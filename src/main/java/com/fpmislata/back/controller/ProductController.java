@@ -19,13 +19,13 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ProductDto>> findAll(
+    public ResponseEntity<Page<ProductDto>> findAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<ProductDto> products = productService.getAll(page, size);
+        Page<ProductDto> products = productService.findAll(page, size);
 
-        return ResponseEntity.ok(products.data());
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
@@ -33,8 +33,8 @@ public class ProductController {
         return ResponseEntity.ok(productService.getById(id));
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<List<ProductDto>> findByName(@PathVariable String name) {
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductDto>> findByName(@RequestParam String name) {
         return ResponseEntity.ok(productService.findByName(name));
     }
 

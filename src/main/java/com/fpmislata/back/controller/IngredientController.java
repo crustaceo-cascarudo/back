@@ -19,18 +19,23 @@ public class IngredientController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<IngredientDto>> findAll(
+    public ResponseEntity<Page<IngredientDto>> findAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<IngredientDto> ingredients = ingredientService.getAll(page, size);
+        Page<IngredientDto> ingredients = ingredientService.findAll(page, size);
 
-        return ResponseEntity.ok(ingredients.data());
+        return ResponseEntity.ok(ingredients);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<IngredientDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(ingredientService.getById(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<IngredientDto>> findByName(@RequestParam String name) {
+        return ResponseEntity.ok(ingredientService.findByName(name));
     }
 
     @PostMapping

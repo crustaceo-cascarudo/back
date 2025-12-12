@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IngredientService {
-    Page<IngredientDto> getAll(int page, int size);
+    Page<IngredientDto> findAll(int page, int size);
     Optional<IngredientDto> findById(Long id);
     List<IngredientDto> findByName(String name);
     IngredientDto getById(Long id);
