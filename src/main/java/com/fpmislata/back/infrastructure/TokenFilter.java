@@ -32,6 +32,9 @@ public class TokenFilter extends OncePerRequestFilter {
             "/api/products",
             "/api/ingredients");
 
+    private static final List<String> AUTHENTICATED_PATHS = Arrays.asList(
+            "/api/users/logout");
+
     public TokenFilter(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -42,6 +45,10 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private boolean isPublicGetPath(String path) {
         return PUBLIC_GET_PATHS.stream().anyMatch(path::startsWith);
+    }
+
+    private boolean isAuthenticatedPath(String path) {
+        return AUTHENTICATED_PATHS.stream().anyMatch(path::startsWith);
     }
 
     private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {

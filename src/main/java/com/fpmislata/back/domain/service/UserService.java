@@ -8,7 +8,8 @@ import com.fpmislata.back.domain.service.dto.UserDto;
 public interface UserService {
     UserDto create(UserDto userDto);
     UserDto update(UserDto userDto);
-    String logByName(String name, String password);
+    String logByName(String name, String password); 
+    void logout(String token);
     Optional<UserDto> findById(Long id);
     List<UserDto> findByName(String name);
     List<UserDto> findAll();

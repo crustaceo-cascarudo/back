@@ -14,4 +14,5 @@ public interface UserRepository {
     void delete(Long id);
     String createSessionToken(Long userId);
     UserEntity findByToken(String token);
+    void deleteSessionToken(String token);
 }

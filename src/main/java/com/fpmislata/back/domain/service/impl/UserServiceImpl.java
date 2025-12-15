@@ -82,6 +82,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void logout(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Token cannot be null or empty");
+        }
+        UserEntity user = userRepository.findByToken(token);
+        if (user == null) {
+            throw new IllegalArgumentException("Invalid token or session already expired");
+        }
+        userRepository.deleteSessionToken(token);
+    }
+
+    @Override
     public Optional<UserDto> findById(Long id) {
         return userRepository.findById(id)
                 .map(UserMapper.getInstance()::fromUserEntityToUser)

@@ -83,6 +83,9 @@ public class UserRepositoryImpl implements UserRepository {
         return UserMapper.getInstance().fromUserJpaEntitytoUserEntity(jpaEntity);
     }
 
-    
+    @Override
+    public void deleteSessionToken(String token) {
+        userDao.deleteToken(token);
+    }
 
 }

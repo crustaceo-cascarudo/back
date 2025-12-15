@@ -54,6 +54,19 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || ! authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid Authorization header format.");
+        }
+
+        String token = authHeader.substring(7);
+        userService.logout(token);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
         UserDto userDto = userService.findById(id)
