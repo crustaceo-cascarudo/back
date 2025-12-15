@@ -1,5 +1,6 @@
 package com.fpmislata.back.persistence.dao.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -58,13 +59,32 @@ public class UserDaoJpa implements UserDao {
     @Transactional
     public String createSessionToken(Long userId) {
         String token = UUID.randomUUID().toString();
+        LocalDateTime now = LocalDateTime.now();
 
-        SessionTokenJpaEntity sessionToken = new SessionTokenJpaEntity(null, token, userId);
+        SessionTokenJpaEntity sessionToken = new SessionTokenJpaEntity(token, userId, now);
 
         entityManager.persist(sessionToken);
         entityManager.flush();
 
         return token;
+    }
+
+    @Override
+    public UserJpaEntity findByToken(String token) {
+        String jpql = "SELECT u FROM UserJpaEntity u JOIN SessionTokenJpaEntity s ON u.id = s.userId WHERE s.token = :token";
+        List<UserJpaEntity> users = entityManager.createQuery(jpql, UserJpaEntity.class)
+                .setParameter("token", token)
+                .getResultList();
+        return users.isEmpty() ? null : users.get(0);
+    }
+
+    @Override
+    @Transactional
+    public void deleteToken(String token) {
+        SessionTokenJpaEntity sessionToken = entityManager.find(SessionTokenJpaEntity.class, token);
+        if (sessionToken != null) {
+            entityManager.remove(sessionToken);
+        }
     }
 
     @Override

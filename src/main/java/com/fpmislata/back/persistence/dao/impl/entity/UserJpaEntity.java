@@ -4,6 +4,8 @@ import com.fpmislata.back.domain.enumerado.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,8 +20,11 @@ public class UserJpaEntity {
     private String name;
     @Column(name = "password")
     private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
-    
+
     public UserJpaEntity() {
     }
 
@@ -45,8 +50,4 @@ public class UserJpaEntity {
     public Role getRole() {
         return role;
     }
-
-    
-    
-
 }

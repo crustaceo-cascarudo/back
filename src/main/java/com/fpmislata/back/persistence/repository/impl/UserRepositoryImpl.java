@@ -77,4 +77,12 @@ public class UserRepositoryImpl implements UserRepository {
         return userDao.createSessionToken(userId);
     }
 
+    @Override
+    public UserEntity findByToken(String token) {
+        UserJpaEntity jpaEntity = userDao.findByToken(token);
+        return UserMapper.getInstance().fromUserJpaEntitytoUserEntity(jpaEntity);
+    }
+
+    
+
 }

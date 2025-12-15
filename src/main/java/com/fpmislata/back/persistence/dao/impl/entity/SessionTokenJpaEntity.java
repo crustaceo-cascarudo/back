@@ -1,35 +1,31 @@
 package com.fpmislata.back.persistence.dao.impl.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "sessions")
+@Table(name = "session")
 public class SessionTokenJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false, unique = true)
+    @Column(name = "token", nullable = false, unique = true)
     private String token;
     @Column(name = "user_id", nullable = false)
     private Long userId;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     public SessionTokenJpaEntity() {
     }
 
-    public SessionTokenJpaEntity(Long id, String token, Long userId) {
-        this.id = id;
+    public SessionTokenJpaEntity(String token, Long userId, LocalDateTime createdAt) {
         this.token = token;
         this.userId = userId;
-    }
-
-    public Long getId() {
-        return id;
+        this.createdAt = createdAt;
     }
 
     public String getToken() {
@@ -40,5 +36,7 @@ public class SessionTokenJpaEntity {
         return userId;
     }
 
-    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

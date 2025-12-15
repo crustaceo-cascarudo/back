@@ -64,6 +64,7 @@ public class CategoryDaoJpa implements CategoryDao {
     @Override
     public CategoryJpaEntity insert(CategoryJpaEntity jpaEntity) {
         entityManager.persist(jpaEntity);
+        entityManager.flush();
         return jpaEntity;
     }
 
