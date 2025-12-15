@@ -25,7 +25,7 @@ import com.fpmislata.back.domain.model.Page;
 import com.fpmislata.back.domain.service.CategoryService;
 import com.fpmislata.back.domain.service.dto.CategoryDto;
 
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
