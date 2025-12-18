@@ -3,6 +3,7 @@ package com.fpmislata.back.domain.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import com.fpmislata.back.domain.enumerado.Role;
 import com.fpmislata.back.domain.mapper.UserMapper;
 import com.fpmislata.back.domain.repository.UserRepository;
 import com.fpmislata.back.domain.repository.entity.UserEntity;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
         if (existingUser.isEmpty()) {
             throw new IllegalArgumentException("User with id " + id + " does not exist.");
         }
-        if (existingUser.get().role().equals("ADMIN")) {
+        if (existingUser.get().role() == Role.ADMIN) {
             throw new IllegalArgumentException("Cannot delete an ADMIN user.");
         }
         userRepository.delete(id);
@@ -79,10 +80,8 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Incorrect password for user " + name + ".");
         }
 
-        // Crear token de sesión
         String sessionToken = userRepository.createSessionToken(existingUsers.get(0).id());
 
-        // Devolver DTO con usuario y token
         return sessionToken;
     }
 

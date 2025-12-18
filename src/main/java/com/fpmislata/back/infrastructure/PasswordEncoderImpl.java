@@ -12,6 +12,9 @@ public class PasswordEncoderImpl implements PasswordEncoderService {
 
     @Override
     public boolean verify(String rawPassword, String encodedPassword) {
+        if (rawPassword == null || encodedPassword == null || encodedPassword.isEmpty()) {
+            return false;
+        }
         BCrypt.Result result = BCrypt.verifyer().verify(rawPassword.toCharArray(), encodedPassword);
         return result.verified;
     }
