@@ -24,8 +24,13 @@ public class AdminRoleFilter extends OncePerRequestFilter {
     private static final List<String> ADMIN_REQUIRED_PATHS = Arrays.asList(
             "/api/categories",
             "/api/products",
-            "/api/ingredients");
+            "/api/ingredients",
+            "/api/users");
 
+    private static final List<String> ADMIN_EXCEPTIONS = Arrays.asList(
+            "/api/users/register", 
+            "/api/users/login", 
+            "/api/users/logout");
     // Métodos que requieren ADMIN (escritura)
     private static final List<String> ADMIN_REQUIRED_METHODS = Arrays.asList(
             "POST", "PUT", "DELETE");
@@ -48,8 +53,17 @@ public class AdminRoleFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Solo verificar rutas que requieren ADMIN y métodos de escritura
-        if (requiresAdminRole(requestPath, requestMethod)) {
+        if (ADMIN_EXCEPTIONS.stream().anyMatch(requestPath::startsWith)) {
+            System.out.println("Ruta de excepción, no requiere ADMIN");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        boolean requiresAdmin = requiresAdminRole(requestPath, requestMethod) || 
+                               (requestPath.startsWith("/api/users") && "GET".equalsIgnoreCase(requestMethod));
+
+
+        if (requiresAdmin) {
             Role userRole = (Role) request.getAttribute("authenticatedUserRole");
 
             if (userRole == null) {

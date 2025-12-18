@@ -33,7 +33,8 @@ public class TokenFilter extends OncePerRequestFilter {
             "/api/ingredients");
 
     private static final List<String> AUTHENTICATED_PATHS = Arrays.asList(
-            "/api/users/logout");
+            "/api/users/logout",
+            "/api/users");
 
     public TokenFilter(UserRepository userRepository) {
         this.userRepository = userRepository;
