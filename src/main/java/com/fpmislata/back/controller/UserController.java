@@ -14,7 +14,6 @@ import com.fpmislata.back.domain.service.dto.UserDto;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

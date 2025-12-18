@@ -1,5 +1,7 @@
 package com.fpmislata.back.persistence.repository.mapper;
 
+import java.util.ArrayList;
+
 import com.fpmislata.back.domain.repository.entity.ProductEntity;
 import com.fpmislata.back.persistence.dao.impl.entity.ProductJpaEntity;
 
@@ -23,11 +25,11 @@ public class ProductMapper {
         ProductJpaEntity productJpaEntity = new ProductJpaEntity(
                 productEntity.id(),
                 productEntity.name(),
-                null,
+                new ArrayList<>(),
                 productEntity.basePrice(),
                 productEntity.discountPercentage(),
                 productEntity.image(),
-                null
+                new ArrayList<>()
         );
 
         productJpaEntity.setProductIngredients(productEntity.ingredients().stream().map(IngredientMapper.getInstance()::fromIngredientEntityToIngredientJpaEntity).toList());

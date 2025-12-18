@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fpmislata.back.persistence.dao.UserDao;
 import com.fpmislata.back.persistence.dao.impl.entity.SessionTokenJpaEntity;
 import com.fpmislata.back.persistence.dao.impl.entity.UserJpaEntity;
@@ -20,7 +18,6 @@ public class UserDaoJpa implements UserDao {
     private EntityManager entityManager;
 
     @Override
-    @Transactional
     public void delete(Long id) {
         UserJpaEntity entity = entityManager.find(UserJpaEntity.class, id);
         if (entity != null) {
@@ -42,7 +39,6 @@ public class UserDaoJpa implements UserDao {
     }
 
     @Override
-    @Transactional
     public UserJpaEntity insert(UserJpaEntity userJpaEntity) {
         entityManager.persist(userJpaEntity);
         entityManager.flush();
@@ -50,13 +46,11 @@ public class UserDaoJpa implements UserDao {
     }
 
     @Override
-    @Transactional
     public UserJpaEntity update(UserJpaEntity userJpaEntity) {
         return entityManager.merge(userJpaEntity);
     }
 
     @Override
-    @Transactional
     public String createSessionToken(Long userId) {
         String token = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
@@ -79,7 +73,6 @@ public class UserDaoJpa implements UserDao {
     }
 
     @Override
-    @Transactional
     public void deleteToken(String token) {
         SessionTokenJpaEntity sessionToken = entityManager.find(SessionTokenJpaEntity.class, token);
         if (sessionToken != null) {

@@ -73,6 +73,12 @@ public class TokenFilter extends OncePerRequestFilter {
 
         System.out.println("[TokenFilter] " + requestMethod + " " + requestPath);
 
+        if ("OPTIONS".equalsIgnoreCase(requestMethod)) {
+            System.out.println("OPTIONS request (CORS preflight), permitir sin validación");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Verificar si es ruta pública
         if (isPublicPath(requestPath)) {
             System.out.println("Ruta pública, permitir sin token");
@@ -99,31 +105,31 @@ public class TokenFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         System.out.println("Token extraído: " + token.substring(0, Math.min(token.length(), 20)) + "...");
 
+        // Validar token en la base de datos
+        UserEntity user;
         try {
-            // Validar token en la base de datos
-            UserEntity user = userRepository.findByToken(token);
-
-            if (user == null) {
-                System.out.println("Token inválido o expirado");
-                sendUnauthorizedResponse(response, "Invalid or expired token");
-                return;
-            }
-
-            System.out.println("Usuario autenticado: " + user.name() + " (Role: " + user.role() + ")");
-
-            // Agregar información del usuario al request
-            request.setAttribute("authenticatedUser", user);
-            request.setAttribute("authenticatedUserId", user.id());
-            request.setAttribute("authenticatedUserRole", user.role());
-            request.setAttribute("authenticatedUserName", user.name());
-
-            // Continuar con la cadena de filtros
-            filterChain.doFilter(request, response);
-
+            user = userRepository.findByToken(token);
         } catch (Exception e) {
-            System.out.println("Error en autenticación: " + e.getMessage());
-            e.printStackTrace();
-            sendUnauthorizedResponse(response, "Authentication failed: " + e.getMessage());
+            System.out.println("Error consultando token en BD: " + e.getMessage());
+            sendUnauthorizedResponse(response, "Authentication service error");
+            return;
         }
+
+        if (user == null) {
+            System.out.println("Token inválido o expirado");
+            sendUnauthorizedResponse(response, "Invalid or expired token");
+            return;
+        }
+
+        System.out.println("Usuario autenticado: " + user.name() + " (Role: " + user.role() + ")");
+
+        // Agregar información del usuario al request
+        request.setAttribute("authenticatedUser", user);
+        request.setAttribute("authenticatedUserId", user.id());
+        request.setAttribute("authenticatedUserRole", user.role());
+        request.setAttribute("authenticatedUserName", user.name());
+
+        // Continuar con la cadena de filtros
+        filterChain.doFilter(request, response);
     }
 }

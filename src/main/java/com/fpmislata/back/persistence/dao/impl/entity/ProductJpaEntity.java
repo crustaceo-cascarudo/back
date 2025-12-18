@@ -1,6 +1,7 @@
 package com.fpmislata.back.persistence.dao.impl.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public class ProductJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @NotNull
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductIngredientJpaEntity> productIngredients;
     private double basePrice;
@@ -51,7 +53,9 @@ public class ProductJpaEntity {
     }
 
     public void setProductIngredients(List<IngredientJpaEntity> productIngredients) {
-        this.productIngredients.clear();
+        if (productIngredients == null) {
+            return;
+        }
         for(IngredientJpaEntity ingredientJpa : productIngredients){
             ProductIngredientJpaEntity productIngredientJpa = new ProductIngredientJpaEntity(this, ingredientJpa);
             this.productIngredients.add(productIngredientJpa);
@@ -88,6 +92,9 @@ public class ProductJpaEntity {
 
     public void setProductCategories(List<CategoryJpaEntity> productCategories) {
         this.productCategories.clear();
+        if (productCategories == null) {
+            return;
+        }
         for(CategoryJpaEntity categoryJpa : productCategories){
             ProductCategoryJpaEntity productCategoryJpa = new ProductCategoryJpaEntity(this, categoryJpa);
             this.productCategories.add(productCategoryJpa);

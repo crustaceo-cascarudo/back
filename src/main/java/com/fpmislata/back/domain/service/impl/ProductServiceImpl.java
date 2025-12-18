@@ -8,6 +8,7 @@ import com.fpmislata.back.domain.repository.ProductRepository;
 import com.fpmislata.back.domain.repository.entity.ProductEntity;
 import com.fpmislata.back.domain.service.ProductService;
 import com.fpmislata.back.domain.service.dto.ProductDto;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id '"+id+"' not found"));
     }
 
+    @Transactional
     @Override
     public ProductDto create(ProductDto productDto) {
         if (findByName(productDto.name()).getFirst().name().equalsIgnoreCase(productDto.name())) {
@@ -72,16 +74,17 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
+    @Transactional
     @Override
     public ProductDto update(ProductDto productDto) {
         productRepository.findById(productDto.id())
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id '"+productDto.id()+"' not found"));
-
-        if(productRepository.findByName(productDto.name()).getFirst().name().equalsIgnoreCase(productDto.name()))
-            if(!productRepository.findByName(productDto.name()).getFirst().id().equals(productDto.id())) {
-                throw new BusinessException("Ingredient with name '" + productDto.name() + "' already exists");
-            }
-
+        if(!productRepository.findByName(productDto.name()).isEmpty()) {
+            if (productRepository.findByName(productDto.name()).getFirst().name().equalsIgnoreCase(productDto.name()))
+                if (!productRepository.findByName(productDto.name()).getFirst().id().equals(productDto.id())) {
+                    throw new BusinessException("Ingredient with name '" + productDto.name() + "' already exists");
+                }
+        }
         ProductEntity productEntity = ProductMapper.getInstance().fromProductToProductEntity(
                 ProductMapper.getInstance().fromProductDtoToProduct(productDto)
         );
@@ -93,6 +96,7 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         if(productRepository.findById(id).isEmpty()) {

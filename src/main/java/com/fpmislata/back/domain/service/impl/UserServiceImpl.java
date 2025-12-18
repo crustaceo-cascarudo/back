@@ -9,6 +9,7 @@ import com.fpmislata.back.domain.repository.entity.UserEntity;
 import com.fpmislata.back.domain.service.PasswordEncoderService;
 import com.fpmislata.back.domain.service.UserService;
 import com.fpmislata.back.domain.service.dto.UserDto;
+import jakarta.transaction.Transactional;
 
 public class UserServiceImpl implements UserService {
 
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto create(UserDto userDto) {
         List<UserDto> existingUsersByName = findByName(userDto.name());
         if (!existingUsersByName.isEmpty()) {
@@ -40,6 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto update(UserDto userDto) {
         Optional<UserDto> existingUser = findById(userDto.id());
         if (existingUser.isEmpty()) {
@@ -52,6 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         Optional<UserDto> existingUser = findById(id);
         if (existingUser.isEmpty()) {
@@ -64,6 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public String logByName(String name, String password) {
         List<UserDto> existingUsers = findByName(name);
         if (existingUsers.isEmpty()) {
@@ -82,6 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void logout(String token) {
         if (token == null || token.trim().isEmpty()) {
             throw new IllegalArgumentException("Token cannot be null or empty");

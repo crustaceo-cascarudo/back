@@ -16,5 +16,6 @@ public record ProductDto(
         @NotNull
         Double finalPrice,
         String image,
+        @NotNull
         List<CategoryDto> categories
 ) { }

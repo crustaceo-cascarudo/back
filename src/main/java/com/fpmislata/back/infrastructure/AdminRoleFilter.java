@@ -41,6 +41,13 @@ public class AdminRoleFilter extends OncePerRequestFilter {
 
         System.out.println("[AdminRoleFilter] " + requestMethod + " " + requestPath);
 
+        // Permitir OPTIONS sin validación (CORS preflight)
+        if ("OPTIONS".equalsIgnoreCase(requestMethod)) {
+            System.out.println("OPTIONS request, permitir sin validación");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Solo verificar rutas que requieren ADMIN y métodos de escritura
         if (requiresAdminRole(requestPath, requestMethod)) {
             Role userRole = (Role) request.getAttribute("authenticatedUserRole");

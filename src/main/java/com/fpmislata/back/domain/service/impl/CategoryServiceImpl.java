@@ -10,6 +10,8 @@ import com.fpmislata.back.domain.repository.entity.CategoryEntity;
 import com.fpmislata.back.domain.service.CategoryService;
 import com.fpmislata.back.domain.service.dto.CategoryDto;
 
+import jakarta.transaction.Transactional;
+
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
@@ -17,6 +19,7 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
         List<CategoryDto> existingCategoryByName = findByName(categoryDto.name());
@@ -39,6 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         Optional<CategoryDto> existingCategory = Optional.of(findById(id));
@@ -74,6 +78,7 @@ public class CategoryServiceImpl implements CategoryService {
                 CategoryMapper.getInstance().fromCategoryEntityToCategory(categoryEntity.get()));
     }
 
+    @Transactional
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
         Optional<CategoryDto> existingCategory = Optional.of(findById(categoryDto.id()));

@@ -57,9 +57,45 @@ public class ProductDaoJpa implements ProductDao {
         if (managed == null) {
             throw new ResourceNotFoundException("Product not found with id " + jpaEntity.getId());
         }
+
+        entityManager.createQuery("DELETE FROM ProductCategoryJpaEntity pc WHERE pc.product.id = :id")
+                 .setParameter("id", jpaEntity.getId())
+                 .executeUpdate();
+                 
+        entityManager.createQuery("DELETE FROM ProductIngredientJpaEntity pi WHERE pi.product.id = :id")
+                 .setParameter("id", jpaEntity.getId())
+                 .executeUpdate();
         managed.getProductCategories().clear();
+        managed.getProductIngredients().clear();
+
         entityManager.flush();
-        return entityManager.merge(jpaEntity);
+        entityManager.clear();
+
+        managed = entityManager.find(ProductJpaEntity.class, jpaEntity.getId());
+        managed.setName(jpaEntity.getName());
+        managed.setBasePrice(jpaEntity.getBasePrice());
+        managed.setDiscountPercentage(jpaEntity.getDiscountPercentage());
+        managed.setImage(jpaEntity.getImage());
+
+        managed.setProductCategories(jpaEntity.getProductCategories());
+        managed.setProductIngredients(jpaEntity.getProductIngredients());
+        
+        return entityManager.merge(managed);
+    }
+
+    public int deleteProductIngredientsByProductId(Long productId) {
+        return entityManager.createQuery(
+                        "DELETE FROM ProductIngredientJpaEntity pi WHERE pi.product.id = :productId")
+                .setParameter("productId", productId)
+                .executeUpdate();
+    }
+
+
+    public int deleteProductCategorysByProductId(Long productId) {
+        return entityManager.createQuery(
+                        "DELETE FROM ProductCategoryJpaEntity pi WHERE pi.product.id = :productId")
+                .setParameter("productId", productId)
+                .executeUpdate();
     }
 
     @Override
