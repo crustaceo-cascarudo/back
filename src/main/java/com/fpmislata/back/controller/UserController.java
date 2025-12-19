@@ -53,7 +53,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("logout")
+    @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || ! authHeader.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid Authorization header format.");
