@@ -67,7 +67,7 @@ public class IngredientServiceImpl implements IngredientService {
     @Transactional
     public IngredientDto create(IngredientDto ingredientDto) {
         List<IngredientDto> existingIngredients = findByName(ingredientDto.name());
-        if(!existingIngredients.isEmpty() && existingIngredients.getFirst().name().equalsIgnoreCase(ingredientDto.name())){
+        if(!existingIngredients.isEmpty()){
             throw new BusinessException("Ingredient with name '"+ingredientDto.name()+"' already exists");
         }
 

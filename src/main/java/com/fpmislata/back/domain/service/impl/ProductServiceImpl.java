@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDto create(ProductDto productDto) {
-        if (findByName(productDto.name()).getFirst().name().equalsIgnoreCase(productDto.name())) {
+        if (!findByName(productDto.name()).isEmpty()) {
             throw new BusinessException("Product with name " + productDto.name() + " already exists");
         }
 
