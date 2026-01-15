@@ -27,12 +27,12 @@ public class ProductServiceImpl implements ProductService {
                 .map(ProductMapper.getInstance()::fromProductEntityToProduct)
                 .map(ProductMapper.getInstance()::fromProductToProductDto)
                 .toList();
-        
+
         return new Page<>(
                 productDtos,
                 productEntityPage.pageNumber(),
                 productEntityPage.pageSize(),
-                productEntityPage.totalPages()
+                productEntityPage.totalElements()
         );
     }
 
