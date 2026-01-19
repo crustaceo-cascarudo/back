@@ -5,7 +5,7 @@ import com.fpmislata.back.domain.enumerado.Role;
 public record UserResponse(
     Long id,
     String name,
-    Role role
-) {
+    String email,
+    Role role) {
 
 }

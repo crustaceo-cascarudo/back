@@ -18,89 +18,99 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
+
+  @GetMapping("")
+  public ResponseEntity<List<UserResponse>> getAllUsers() {
+    List<UserDto> users = userService.findAll();
+    List<UserResponse> response = users.stream()
+        .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
+        .toList();
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/register")
+  public ResponseEntity<UserResponse> register(@RequestBody RegisterUserRequest request) {
+    UserDto userDto = UserMapper.getInstance().fromUserRequestToUserDto(request);
+    UserDto createdUser = userService.create(userDto);
+    UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(createdUser);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(@RequestBody LoginUserRequest request) {
+    String token = userService.logByEmail(request.email(), request.plainPassword());
+    List<UserDto> users = userService.findByEmail(request.email());
+    if (users.isEmpty()) {
+      throw new IllegalArgumentException("User not found");
+    }
+    UserResponse userResponse = UserMapper.getInstance().fromUserDtoToUserResponse(users.get(0));
+    LoginResponse response = new LoginResponse(token, userResponse);
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      throw new IllegalArgumentException("Invalid Authorization header format.");
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserDto> users = userService.findAll();
-        List<UserResponse> response = users.stream()
-                .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
-                .toList();
-        return ResponseEntity.ok(response);
-    }
+    String token = authHeader.substring(7);
+    userService.logout(token);
 
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody RegisterUserRequest request) {
-        UserDto userDto = UserMapper.getInstance().fromUserRequestToUserDto(request);
-        UserDto createdUser = userService.create(userDto);
-        UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(createdUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+    return ResponseEntity.noContent().build();
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginUserRequest request) {
-        String token = userService.logByName(request.name(), request.plainPassword());
-        List<UserDto> users = userService.findByName(request.name());
-        if (users.isEmpty()) {
-            throw new IllegalArgumentException("User not found");
-        }
-        UserResponse userResponse = UserMapper.getInstance().fromUserDtoToUserResponse(users.get(0));
-        LoginResponse response = new LoginResponse(token, userResponse);
-        return ResponseEntity.ok(response);
-    }
+  }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader == null || ! authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid Authorization header format.");
-        }
+  @GetMapping("/{id}")
+  public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
+    UserDto userDto = userService.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 
-        String token = authHeader.substring(7);
-        userService.logout(token);
+    UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(userDto);
+    return ResponseEntity.ok(response);
+  }
 
-        return ResponseEntity.noContent().build();
+  @GetMapping("/name/search")
+  public ResponseEntity<List<UserResponse>> findByName(@RequestParam String name) {
+    List<UserDto> users = userService.findByName(name);
+    List<UserResponse> response = users.stream()
+        .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
+        .toList();
+    return ResponseEntity.ok(response);
+  }
 
-    }
+  @GetMapping("/email/search")
+  public ResponseEntity<List<UserResponse>> findByEmail(@RequestParam String email) {
+    List<UserDto> users = userService.findByEmail(email);
+    List<UserResponse> response = users.stream()
+        .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
+        .toList();
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
-        UserDto userDto = userService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+  @PutMapping("/{id}")
+  public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody RegisterUserRequest request) {
+    UserDto userDto = UserMapper.getInstance().fromUserRequestToUserDto(request);
+    UserDto updatedUser = userService.update(new UserDto(
+        id,
+        userDto.name(),
+        userDto.email(),
+        userDto.plainPassword(),
+        userDto.passwordHash(),
+        userDto.role()));
+    UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(updatedUser);
+    return ResponseEntity.ok(response);
+  }
 
-        UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(userDto);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<UserResponse>> findByName(@RequestParam String name) {
-        List<UserDto> users = userService.findByName(name);
-        List<UserResponse> response = users.stream()
-                .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
-                .toList();
-        return ResponseEntity.ok(response);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody RegisterUserRequest request) {
-        UserDto userDto = UserMapper.getInstance().fromUserRequestToUserDto(request);
-        UserDto updatedUser = userService.update(new UserDto(
-                id,
-                userDto.name(),
-                userDto.plainPassword(),
-                userDto.passwordHash(),
-                userDto.role()));
-        UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(updatedUser);
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    userService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 
 }

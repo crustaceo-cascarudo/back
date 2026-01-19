@@ -6,12 +6,21 @@ import java.util.Optional;
 import com.fpmislata.back.domain.service.dto.UserDto;
 
 public interface UserService {
-    UserDto create(UserDto userDto);
-    UserDto update(UserDto userDto);
-    String logByName(String name, String password); 
-    void logout(String token);
-    Optional<UserDto> findById(Long id);
-    List<UserDto> findByName(String name);
-    List<UserDto> findAll();
-    void delete(Long id);
+  UserDto create(UserDto userDto);
+
+  UserDto update(UserDto userDto);
+
+  String logByEmail(String email, String password);
+
+  void logout(String token);
+
+  Optional<UserDto> findById(Long id);
+
+  List<UserDto> findByName(String name);
+
+  List<UserDto> findByEmail(String email);
+
+  List<UserDto> findAll();
+
+  void delete(Long id);
 }

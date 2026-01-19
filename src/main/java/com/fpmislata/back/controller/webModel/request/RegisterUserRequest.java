@@ -4,8 +4,8 @@ import com.fpmislata.back.domain.enumerado.Role;
 
 public record RegisterUserRequest(
     String name,
+    String email,
     String password,
-    Role role
-) {
+    Role role) {
 
 }

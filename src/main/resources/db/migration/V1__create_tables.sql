@@ -1,6 +1,7 @@
 CREATE TABLE `user` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL UNIQUE,
+    `name` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
     `role` ENUM('ADMIN', 'NORMAL') NOT NULL,
     PRIMARY KEY (`id`)
