@@ -1,3 +1,7 @@
+INSERT INTO `user` (`id`, `name`, `email`, `password`, `role`) VALUES
+(1, 'chini', 'chini@gmail.com','$2a$12$9kMYTkiTnHVA5uUn9fJKb.9iNKUXs6AyzfmjCQgDA6h4rNWL.7fv6', 'ADMIN');
+
+
 INSERT INTO `category` (`id`, `name`, `slug`, `description`, `estado`) VALUES
 (1, 'Pizzas', 'pizzas', 'Pizzas artesanales al horno', TRUE),
 (2, 'Hamburguesas', 'hamburguesas', 'Hamburguesas gourmet', TRUE),
