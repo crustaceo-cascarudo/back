@@ -3,6 +3,8 @@ package com.fpmislata.back.controller;
 import com.fpmislata.back.domain.model.Page;
 import com.fpmislata.back.domain.service.IngredientService;
 import com.fpmislata.back.domain.service.dto.IngredientDto;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,22 +27,22 @@ public class IngredientController {
     ) {
         Page<IngredientDto> ingredients = ingredientService.findAll(page, size);
 
-        return ResponseEntity.ok(ingredients);
+        return ResponseEntity.status(HttpStatus.OK).body(ingredients);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<IngredientDto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(ingredientService.getById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(ingredientService.getById(id));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<IngredientDto>> findByName(@RequestParam String name) {
-        return ResponseEntity.ok(ingredientService.findByName(name));
+        return ResponseEntity.status(HttpStatus.OK).body(ingredientService.findByName(name));
     }
 
     @PostMapping
     public ResponseEntity<IngredientDto> create(@RequestBody @Validated IngredientDto ingredientDto) {
-        return ResponseEntity.ok(ingredientService.create(ingredientDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ingredientService.create(ingredientDto));
     }
 
     @PutMapping("/{id}")
@@ -48,7 +50,7 @@ public class IngredientController {
             @PathVariable Long id,
             @RequestBody IngredientDto ingredientDto
     ) {
-        return ResponseEntity.ok(ingredientService.update(ingredientDto));
+        return ResponseEntity.status(HttpStatus.OK).body(ingredientService.update(ingredientDto));
     }
 
     @DeleteMapping("/{id}")

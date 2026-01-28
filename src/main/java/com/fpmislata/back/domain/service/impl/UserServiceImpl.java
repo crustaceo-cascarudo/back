@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserDto> findByEmail(String email) {
-    return userRepository.findAll().stream()
+    return userRepository.findByEmail(email).stream()
         .map(UserMapper.getInstance()::fromUserEntityToUser)
         .map(UserMapper.getInstance()::fromUserToUserDto)
         .toList();

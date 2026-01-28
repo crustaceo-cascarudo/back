@@ -30,7 +30,7 @@ public class UserController {
     List<UserResponse> response = users.stream()
         .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
         .toList();
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PostMapping("/register")
@@ -50,7 +50,7 @@ public class UserController {
     }
     UserResponse userResponse = UserMapper.getInstance().fromUserDtoToUserResponse(users.get(0));
     LoginResponse response = new LoginResponse(token, userResponse);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PostMapping("/logout")
@@ -72,7 +72,7 @@ public class UserController {
         .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 
     UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(userDto);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @GetMapping("/name/search")
@@ -81,7 +81,7 @@ public class UserController {
     List<UserResponse> response = users.stream()
         .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
         .toList();
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @GetMapping("/email/search")
@@ -90,7 +90,7 @@ public class UserController {
     List<UserResponse> response = users.stream()
         .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
         .toList();
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PutMapping("/{id}")
@@ -104,7 +104,7 @@ public class UserController {
         userDto.passwordHash(),
         userDto.role()));
     UserResponse response = UserMapper.getInstance().fromUserDtoToUserResponse(updatedUser);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @DeleteMapping("/{id}")

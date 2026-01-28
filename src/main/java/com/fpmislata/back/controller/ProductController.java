@@ -3,6 +3,8 @@ package com.fpmislata.back.controller;
 import com.fpmislata.back.domain.model.Page;
 import com.fpmislata.back.domain.service.ProductService;
 import com.fpmislata.back.domain.service.dto.ProductDto;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,7 @@ public class ProductController {
     ) {
         Page<ProductDto> products = productService.findAll(page, size);
 
-        return ResponseEntity.ok(products);
+        return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
     @GetMapping("/category/{categorySlug}")
@@ -36,22 +38,22 @@ public class ProductController {
     ) {
         Page<ProductDto> products = productService.findByCategory(categorySlug, page, size);
         System.out.println(products.data().getFirst());
-        return ResponseEntity.ok(products);
+        return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getById(id));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<ProductDto>> findByName(@RequestParam String name) {
-        return ResponseEntity.ok(productService.findByName(name));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findByName(name));
     }
 
     @PostMapping
     public ResponseEntity<ProductDto> create(@RequestBody @Validated ProductDto productDto) {
-        return ResponseEntity.ok(productService.create(productDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(productDto));
     }
 
     @PutMapping("/{id}")
@@ -59,7 +61,7 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody ProductDto productDto
     ) {
-        return ResponseEntity.ok(productService.update(productDto));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.update(productDto));
     }
 
     @DeleteMapping("/{id}")

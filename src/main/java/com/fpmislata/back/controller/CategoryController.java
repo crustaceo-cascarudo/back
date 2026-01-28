@@ -51,14 +51,14 @@ public class CategoryController {
                 categoryPage.totalElements(),
                 categoryPage.totalPages());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DetailCategoryResponse> getById(@PathVariable Long id) {
         CategoryDto categoryDto = categoryService.findById(id);
         DetailCategoryResponse response = CategoryMapper.fromCategoryDtoToDetailCategoryResponse(categoryDto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/search")
@@ -67,7 +67,7 @@ public class CategoryController {
         List<DetailCategoryResponse> response = category.stream()
                 .map(CategoryMapper::fromCategoryDtoToDetailCategoryResponse)
                 .toList();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("")
@@ -97,7 +97,7 @@ public class CategoryController {
                 .fromUpdateRequestToCategoryDto(updatedRequest);
         CategoryDto updatedCategory = categoryService.update(categoryDto);
         DetailCategoryResponse response = CategoryMapper.fromCategoryDtoToDetailCategoryResponse(updatedCategory);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")
