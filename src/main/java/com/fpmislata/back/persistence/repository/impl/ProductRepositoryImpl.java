@@ -29,6 +29,16 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
+    public Page<ProductEntity> findByCategory(String categorySlug, int page, int size) {
+        List<ProductEntity> content = productDao.findByCategory(categorySlug, page, size).stream()
+                .map(ProductMapper.getInstance()::fromProductJpaEntityToProductEntity)
+                .toList();
+
+        long total = productDao.countByCategory(categorySlug);
+        return new Page<>(content, page, size, total);
+    }
+
+    @Override
     public List<ProductEntity> findByName(String name) {
         return productDao.findByName(name).stream().map(ProductMapper.getInstance()::fromProductJpaEntityToProductEntity).toList();
     }

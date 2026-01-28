@@ -28,6 +28,17 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/category/{categorySlug}")
+    public ResponseEntity<Page<ProductDto>> findByCategory(
+            @PathVariable String categorySlug,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<ProductDto> products = productService.findByCategory(categorySlug, page, size);
+        System.out.println(products.data().getFirst());
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getById(id));

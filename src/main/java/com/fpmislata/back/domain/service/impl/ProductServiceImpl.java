@@ -37,6 +37,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<ProductDto> findByCategory(String categorySlug, int page, int size) {
+        Page<ProductEntity> productEntityPage = productRepository.findByCategory(categorySlug, page, size);
+        List<ProductDto> productDtos = productEntityPage.data()
+                .stream()
+                .map(ProductMapper.getInstance()::fromProductEntityToProduct)
+                .map(ProductMapper.getInstance()::fromProductToProductDto)
+                .toList();
+
+        return new Page<>(
+                productDtos,
+                productEntityPage.pageNumber(),
+                productEntityPage.pageSize(),
+                productEntityPage.totalElements()
+        );
+    }
+
+    @Override
     public List<ProductDto> findByName(String name) {
         return productRepository
                 .findByName(name)
