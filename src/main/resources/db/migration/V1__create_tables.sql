@@ -41,6 +41,16 @@ CREATE TABLE `ingredient` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `reservation` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `reservation_date` DATE NOT NULL,
+    `phone_number` INT(15) NOT NULL,
+    `message` VARCHAR(500),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE `product_ingredient` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `ingredient_id` INT(11) NOT NULL,
