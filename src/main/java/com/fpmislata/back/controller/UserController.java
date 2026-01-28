@@ -1,5 +1,6 @@
 package com.fpmislata.back.controller;
 
+import com.fpmislata.back.domain.model.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +26,21 @@ public class UserController {
   }
 
   @GetMapping("")
-  public ResponseEntity<List<UserResponse>> getAllUsers() {
-    List<UserDto> users = userService.findAll();
-    List<UserResponse> response = users.stream()
+  public ResponseEntity<Page<UserResponse>> getAllUsers(
+    @RequestParam(defaultValue = "1") int page,
+    @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<UserDto> users = userService.findAll(page, size);
+    List<UserResponse> userResponses = users.data().stream()
         .map(UserMapper.getInstance()::fromUserDtoToUserResponse)
         .toList();
+
+    Page<UserResponse> response = new Page<>(
+            userResponses,
+            users.pageNumber(),
+            users.pageSize(),
+            users.totalElements()
+        );
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 

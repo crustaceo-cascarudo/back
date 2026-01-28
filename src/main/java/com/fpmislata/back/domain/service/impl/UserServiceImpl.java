@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.fpmislata.back.domain.mapper.UserMapper;
+import com.fpmislata.back.domain.model.Page;
 import com.fpmislata.back.domain.repository.UserRepository;
 import com.fpmislata.back.domain.repository.entity.UserEntity;
 import com.fpmislata.back.domain.service.PasswordEncoderService;
@@ -123,11 +124,20 @@ public class UserServiceImpl implements UserService {
         .toList();
   }
 
-  @Override
-  public List<UserDto> findAll() {
-    return userRepository.findAll().stream()
-        .map(UserMapper.getInstance()::fromUserEntityToUser)
-        .map(UserMapper.getInstance()::fromUserToUserDto)
-        .toList();
-  }
+    @Override
+    public Page<UserDto> findAll(int page, int size) {
+        Page<UserEntity> userEntityPage = userRepository.findAll(page, size);
+        List<UserDto> userDtos = userEntityPage.data()
+                .stream()
+                .map(UserMapper.getInstance()::fromUserEntityToUser)
+                .map(UserMapper.getInstance()::fromUserToUserDto)
+                .toList();
+
+        return new Page<>(
+                userDtos,
+                userEntityPage.pageNumber(),
+                userEntityPage.pageSize(),
+                userEntityPage.totalElements()
+        );
+    }
 }

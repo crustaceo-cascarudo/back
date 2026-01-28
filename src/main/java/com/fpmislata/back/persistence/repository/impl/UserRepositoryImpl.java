@@ -3,6 +3,7 @@ package com.fpmislata.back.persistence.repository.impl;
 import java.util.List;
 import java.util.Optional;
 
+import com.fpmislata.back.domain.model.Page;
 import com.fpmislata.back.domain.repository.UserRepository;
 import com.fpmislata.back.domain.repository.entity.UserEntity;
 import com.fpmislata.back.persistence.dao.UserDao;
@@ -22,12 +23,14 @@ public class UserRepositoryImpl implements UserRepository {
     userDao.delete(id);
   }
 
-  @Override
-  public List<UserEntity> findAll() {
-    return userDao.findAll(0, 5).stream()
-        .map(UserMapper.getInstance()::fromUserJpaEntitytoUserEntity)
-        .toList();
-  }
+    @Override
+    public Page<UserEntity> findAll(int page, int size) {
+       List<UserEntity> content = userDao.findAll(page, size).stream()
+                .map(UserMapper.getInstance()::fromUserJpaEntitytoUserEntity)
+                .toList();
+       long total = userDao.count();
+       return new Page<>(content, page, size, total);
+    }
 
   @Override
   public Optional<UserEntity> findById(Long id) {
