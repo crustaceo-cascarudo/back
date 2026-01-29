@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotNull;
 public record IngredientDto(
                 Long id,
                 @NotNull String name,
-                @NotNull Double price,
+                @NotNull Double basePrice,
                 String image) {
 }
