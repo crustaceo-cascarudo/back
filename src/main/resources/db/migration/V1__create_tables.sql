@@ -61,3 +61,26 @@ CREATE TABLE `product_category` (
     UNIQUE KEY `unique_product_category` (`product_id`, `category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+CREATE TABLE `user_order` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `estado` ENUM('CARRITO', 'PENDIENTE', 'PAGADO', 'ENVIADO', 'CANCELADO') NOT NULL DEFAULT 'CARRITO',
+    `address` VARCHAR(500) NULL,
+    `order_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `total_price` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    `user_id` INT(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_order_user` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `order_item` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `order_id` INT(11) NOT NULL,
+    `product_id` INT(11) NOT NULL,
+    `quantity` INT(11) NOT NULL,
+    `item_price` DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_item_order` FOREIGN KEY (`order_id`) REFERENCES `user_order`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_item_product` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE CASCADE,
+    UNIQUE KEY `unique_order_product` (`order_id`, `product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

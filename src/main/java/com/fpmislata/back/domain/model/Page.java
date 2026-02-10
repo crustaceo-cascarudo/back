@@ -1,9 +1,6 @@
 package com.fpmislata.back.domain.model;
 
 import java.util.List;
-import java.util.Optional;
-
-import com.fpmislata.back.domain.repository.entity.CategoryEntity;
 
 public record Page<T>(
         List<T> data,
@@ -44,8 +41,4 @@ public record Page<T>(
         return pageSize;
     }
 
-    public Optional<CategoryEntity> stream() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stream'");
-    }
 }
