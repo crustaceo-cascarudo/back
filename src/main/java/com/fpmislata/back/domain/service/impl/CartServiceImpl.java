@@ -21,6 +21,7 @@ import com.fpmislata.back.domain.repository.entity.ProductEntity;
 import com.fpmislata.back.domain.service.CartService;
 import com.fpmislata.back.domain.service.dto.CartDto;
 import com.fpmislata.back.domain.service.dto.OrderDto;
+import com.fpmislata.back.infrastructure.payment.service.BankPaymentService;
 
 import jakarta.transaction.Transactional;
 
@@ -28,10 +29,12 @@ public class CartServiceImpl implements CartService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final BankPaymentService bankPaymentService;
 
-    public CartServiceImpl(OrderRepository orderRepository, ProductRepository productRepository) {
+    public CartServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, BankPaymentService bankPaymentService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.bankPaymentService = bankPaymentService;
     }
 
     @Override
@@ -224,6 +227,43 @@ public class CartServiceImpl implements CartService {
 
         OrderEntity order = new OrderEntity(
                 cart.id(), cart.products(), Estado.PENDIENTE.name(),
+                address, new Date(), cart.totalPrice(), cart.userId()
+        );
+
+        OrderEntity savedOrder = orderRepository.save(order);
+        return OrderMapper.getInstance().fromOrderToOrderDto(
+                OrderMapper.getInstance().fromOrderEntityToOrder(savedOrder)
+        );
+    }
+
+    @Override
+    @Transactional
+    public OrderDto payWithCard(Long userId, String address, Long cardNumber, Date expirationDate, int cvc, String fullName, String accountIban) {
+        OrderEntity cart = orderRepository.findByUserIdAndEstado(userId, Estado.CARRITO.name())
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró carrito activo para el usuario con id: " + userId));
+
+        if (cart.products() == null || cart.products().isEmpty()) {
+            throw new BusinessException("No se puede pagar un carrito vacío");
+        }
+
+        if (address == null || address.isBlank()) {
+            throw new BusinessException("La dirección es obligatoria para realizar el pago");
+        }
+
+        // Procesar el pago con el banco a través de su API
+        bankPaymentService.processCardPayment(
+                cardNumber,
+                expirationDate,
+                cvc,
+                fullName,
+                accountIban,
+                cart.totalPrice().floatValue(),
+                "Pedido Tienda #" + cart.id()
+        );
+
+        // Si el pago fue exitoso, marcar el carrito como PAGADO
+        OrderEntity order = new OrderEntity(
+                cart.id(), cart.products(), Estado.PAGADO.name(),
                 address, new Date(), cart.totalPrice(), cart.userId()
         );
 

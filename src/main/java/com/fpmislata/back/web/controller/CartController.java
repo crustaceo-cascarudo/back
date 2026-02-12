@@ -8,10 +8,12 @@ import com.fpmislata.back.web.mapper.CartMapper;
 import com.fpmislata.back.web.mapper.OrderMapper;
 import com.fpmislata.back.web.webModel.request.AddCartItemRequest;
 import com.fpmislata.back.web.webModel.request.CheckoutRequest;
+import com.fpmislata.back.web.webModel.request.PayWithCardRequest;
 import com.fpmislata.back.web.webModel.request.RemoveCartItemRequest;
 import com.fpmislata.back.web.webModel.request.UpdateCartItemRequest;
 import com.fpmislata.back.web.webModel.response.CartResponse;
 import com.fpmislata.back.web.webModel.response.OrderResponse;
+import com.fpmislata.back.web.webModel.response.PaymentResponse;
 import com.fpmislata.back.domain.service.CartService;
 import com.fpmislata.back.domain.service.dto.CartDto;
 import com.fpmislata.back.domain.service.dto.OrderDto;
@@ -81,5 +83,33 @@ public class CartController {
       @RequestBody CheckoutRequest request) {
     OrderDto order = cartService.checkout(authenticatedUserId, request.address());
     return ResponseEntity.ok(OrderMapper.getInstance().fromOrderDtoToOrderResponse(order));
+  }
+
+  @PostMapping("/pay")
+  public ResponseEntity<PaymentResponse> payWithCard(
+      @RequestAttribute Long authenticatedUserId,
+      @RequestBody PayWithCardRequest request) {
+
+    OrderDto order = cartService.payWithCard(
+        authenticatedUserId,
+        request.address(),
+        request.cardNumber(),
+        request.expirationDate(),
+        request.cvc(),
+        request.fullName(),
+        request.accountIban());
+
+    OrderResponse orderResponse = OrderMapper.getInstance().fromOrderDtoToOrderResponse(order);
+    PaymentResponse paymentResponse = new PaymentResponse(
+        orderResponse.id(),
+        orderResponse.estado(),
+        orderResponse.address(),
+        orderResponse.orderDate(),
+        orderResponse.items(),
+        orderResponse.totalItems(),
+        orderResponse.totalPrice(),
+        "Pago realizado con éxito");
+
+    return ResponseEntity.ok(paymentResponse);
   }
 }
