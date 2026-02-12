@@ -85,17 +85,45 @@ public class OrderDaoJpa implements OrderDao {
 
         if (entity.getItems() != null) {
             for (OrderItemJpaEntity item : entity.getItems()) {
-                OrderItemJpaEntity newItem = new OrderItemJpaEntity();
-                newItem.setId(item.getId());
-                newItem.setOrder(managed);
-                newItem.setQuantity(item.getQuantity());
-                newItem.setItemPrice(item.getItemPrice());
-                // Asegurar que el producto está managed
-                if (item.getProduct() != null && item.getProduct().getId() != null) {
-                    ProductJpaEntity managedProduct = entityManager.find(ProductJpaEntity.class, item.getProduct().getId());
-                    newItem.setProduct(managedProduct);
+                OrderItemJpaEntity itemToAdd;
+                
+                // Si el item tiene ID, intentar recuperarlo del contexto
+                if (item.getId() != null) {
+                    OrderItemJpaEntity existingItem = entityManager.find(OrderItemJpaEntity.class, item.getId());
+                    if (existingItem != null) {
+                        // Actualizar item existente
+                        existingItem.setQuantity(item.getQuantity());
+                        existingItem.setItemPrice(item.getItemPrice());
+                        existingItem.setOrder(managed);
+                        if (item.getProduct() != null && item.getProduct().getId() != null) {
+                            ProductJpaEntity managedProduct = entityManager.find(ProductJpaEntity.class, item.getProduct().getId());
+                            existingItem.setProduct(managedProduct);
+                        }
+                        itemToAdd = existingItem;
+                    } else {
+                        // El ID no existe en BD, crear nuevo sin ID
+                        itemToAdd = new OrderItemJpaEntity();
+                        itemToAdd.setQuantity(item.getQuantity());
+                        itemToAdd.setItemPrice(item.getItemPrice());
+                        itemToAdd.setOrder(managed);
+                        if (item.getProduct() != null && item.getProduct().getId() != null) {
+                            ProductJpaEntity managedProduct = entityManager.find(ProductJpaEntity.class, item.getProduct().getId());
+                            itemToAdd.setProduct(managedProduct);
+                        }
+                    }
+                } else {
+                    // Item nuevo sin ID
+                    itemToAdd = new OrderItemJpaEntity();
+                    itemToAdd.setQuantity(item.getQuantity());
+                    itemToAdd.setItemPrice(item.getItemPrice());
+                    itemToAdd.setOrder(managed);
+                    if (item.getProduct() != null && item.getProduct().getId() != null) {
+                        ProductJpaEntity managedProduct = entityManager.find(ProductJpaEntity.class, item.getProduct().getId());
+                        itemToAdd.setProduct(managedProduct);
+                    }
                 }
-                managed.getItems().add(newItem);
+                
+                managed.getItems().add(itemToAdd);
             }
         }
 

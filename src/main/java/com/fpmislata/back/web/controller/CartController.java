@@ -94,7 +94,8 @@ public class CartController {
         authenticatedUserId,
         request.address(),
         request.cardNumber(),
-        request.expirationDate(),
+        request.expiryMonth(),
+        request.expiryYear(),
         request.cvc(),
         request.fullName(),
         request.accountIban());

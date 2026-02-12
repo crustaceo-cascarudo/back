@@ -3,8 +3,6 @@ package com.fpmislata.back.domain.service;
 import com.fpmislata.back.domain.service.dto.CartDto;
 import com.fpmislata.back.domain.service.dto.OrderDto;
 
-import java.util.Date;
-
 public interface CartService {
   CartDto getActiveCartByUserId(Long userId);
   CartDto createCartForUser(Long userId);
@@ -14,5 +12,5 @@ public interface CartService {
   void clearCart(Long userId);
   void deleteCartById(Long id);
   OrderDto checkout(Long userId, String address);
-  OrderDto payWithCard(Long userId, String address, Long cardNumber, Date expirationDate, int cvc, String fullName, String accountIban);
+  OrderDto payWithCard(Long userId, String address, String cardNumber, String expiryMonth, String expiryYear, String cvc, String fullName, String accountIban);
 }

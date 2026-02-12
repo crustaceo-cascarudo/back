@@ -48,7 +48,7 @@ public class BankPaymentServiceImpl implements BankPaymentService {
         expirationDate,
         Integer.parseInt(request.cvc()),
         request.fullName(),
-        request.accountIban());
+        null);
 
     BankCardPaymentRequest bankRequest = new BankCardPaymentRequest(
         null,

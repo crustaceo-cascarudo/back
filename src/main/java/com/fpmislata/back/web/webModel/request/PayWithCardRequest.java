@@ -1,11 +1,10 @@
 package com.fpmislata.back.web.webModel.request;
 
-import java.util.Date;
-
 public record PayWithCardRequest(
-    Long cardNumber,
-    Date expirationDate,
-    int cvc,
+    String cardNumber,
+    String expiryMonth,
+    String expiryYear,
+    String cvc,
     String fullName,
     String accountIban,
     String address
