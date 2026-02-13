@@ -257,7 +257,7 @@ public class CartServiceImpl implements CartService {
         fullName,
         accountIban,
         cart.totalPrice(),
-        "Pedido Tienda #" + cart.id());
+        "Crustaceo-cascarudo");
 
     bankPaymentService.processCardPayment(paymentRequest);
 
