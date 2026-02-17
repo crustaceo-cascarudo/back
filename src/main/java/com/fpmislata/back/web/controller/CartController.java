@@ -53,7 +53,7 @@ public class CartController {
   public ResponseEntity<CartResponse> removeItem(
       @RequestAttribute Long authenticatedUserId,
       @RequestBody RemoveCartItemRequest request) {
-    CartDto cart = cartService.removeItemFromCart(authenticatedUserId, request.productId(), request.quantity());
+    CartDto cart = cartService.removeItemFromCart(authenticatedUserId, request.productId());
     return ResponseEntity.ok(CartMapper.getInstance().fromCartDtoToCartResponse(cart));
   }
 

@@ -112,11 +112,7 @@ public class CartServiceImpl implements CartService {
 
   @Override
   @Transactional
-  public CartDto removeItemFromCart(Long userId, Long productId, int quantity) {
-    if (quantity <= 0) {
-      throw new BusinessException("La cantidad debe ser mayor que cero");
-    }
-
+  public CartDto removeItemFromCart(Long userId, Long productId) {
     OrderEntity cartEntity = orderRepository.findByUserIdAndEstado(userId, Estado.CARRITO.name())
         .orElseThrow(
             () -> new ResourceNotFoundException("No se encontró carrito activo para el usuario con id: " + userId));
@@ -129,16 +125,7 @@ public class CartServiceImpl implements CartService {
         .orElseThrow(
             () -> new ResourceNotFoundException("Producto con id " + productId + " no encontrado en el carrito"));
 
-    int newQuantity = existingItem.quantity() - quantity;
-    if (newQuantity <= 0) {
-      updatedItems.remove(existingItem);
-    } else {
-      OrderItemEntity updatedItem = new OrderItemEntity(
-          existingItem.id(), existingItem.productEntity(),
-          newQuantity, existingItem.itemPrice());
-      int index = updatedItems.indexOf(existingItem);
-      updatedItems.set(index, updatedItem);
-    }
+    updatedItems.remove(existingItem);
 
     BigDecimal totalPrice = calculateTotal(updatedItems);
     OrderEntity updatedCart = new OrderEntity(
