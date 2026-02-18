@@ -13,7 +13,6 @@ public record ProductDto(
         @NotNull(message = "Base price cant be null")
         double basePrice,
         Integer discountPercentage,
-        @NotNull
         Double finalPrice,
         String image,
         @NotNull

@@ -67,7 +67,7 @@ public class Product {
         if(discountPercentage == null){
             return basePrice;
         }
-        return basePrice - (basePrice * discountPercentage);
+        return basePrice - (basePrice * discountPercentage / 100);
     }
 
     public String getImage() {

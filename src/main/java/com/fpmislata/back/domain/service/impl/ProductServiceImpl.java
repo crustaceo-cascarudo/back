@@ -27,12 +27,29 @@ public class ProductServiceImpl implements ProductService {
                 .map(ProductMapper.getInstance()::fromProductEntityToProduct)
                 .map(ProductMapper.getInstance()::fromProductToProductDto)
                 .toList();
-        
+
         return new Page<>(
                 productDtos,
                 productEntityPage.pageNumber(),
                 productEntityPage.pageSize(),
-                productEntityPage.totalPages()
+                productEntityPage.totalElements()
+        );
+    }
+
+    @Override
+    public Page<ProductDto> findByCategory(String categorySlug, int page, int size) {
+        Page<ProductEntity> productEntityPage = productRepository.findByCategory(categorySlug, page, size);
+        List<ProductDto> productDtos = productEntityPage.data()
+                .stream()
+                .map(ProductMapper.getInstance()::fromProductEntityToProduct)
+                .map(ProductMapper.getInstance()::fromProductToProductDto)
+                .toList();
+
+        return new Page<>(
+                productDtos,
+                productEntityPage.pageNumber(),
+                productEntityPage.pageSize(),
+                productEntityPage.totalElements()
         );
     }
 
@@ -58,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDto create(ProductDto productDto) {
-        if (findByName(productDto.name()).getFirst().name().equalsIgnoreCase(productDto.name())) {
+        if (!findByName(productDto.name()).isEmpty()) {
             throw new BusinessException("Product with name " + productDto.name() + " already exists");
         }
 

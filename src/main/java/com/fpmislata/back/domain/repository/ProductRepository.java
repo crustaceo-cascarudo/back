@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface ProductRepository {
     Page<ProductEntity> findAll(int page, int size);
+    Page<ProductEntity> findByCategory(String categorySlug, int page, int size);
     List<ProductEntity> findByName(String name);
     Optional<ProductEntity> findById(Long id);
     ProductEntity save(ProductEntity productEntity);

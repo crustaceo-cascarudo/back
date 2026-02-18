@@ -29,6 +29,29 @@ public class ProductDaoJpa implements ProductDao {
     }
 
     @Override
+    public List<ProductJpaEntity> findByCategory(String categorySlug, int pageNumber, int pageSize) {
+        int pageIndex = Math.max(pageNumber - 1, 0);
+
+        String sql = "SELECT DISTINCT p FROM ProductJpaEntity p " +
+                "JOIN p.productCategories pc " +
+                "JOIN pc.category c " +
+                "WHERE c.slug = :slug " +
+                "ORDER BY p.id";
+
+        try {
+            TypedQuery<ProductJpaEntity> productJpaEntityPage = entityManager
+                    .createQuery(sql, ProductJpaEntity.class)
+                    .setParameter("slug", categorySlug)
+                    .setFirstResult(pageIndex * pageSize)
+                    .setMaxResults(pageSize);
+
+            return productJpaEntityPage.getResultList();
+        }catch (Exception e){
+            return List.of();
+        }
+    }
+
+    @Override
     public ProductJpaEntity insert(ProductJpaEntity jpaEntity) {
         entityManager.persist(jpaEntity);
         return jpaEntity;
@@ -106,5 +129,15 @@ public class ProductDaoJpa implements ProductDao {
     @Override
     public long count() {
         return entityManager.createQuery("SELECT COUNT(b) FROM ProductJpaEntity b", Long.class).getSingleResult();
+    }
+
+    public long countByCategory(String categorySlug) {
+        String sql = "SELECT COUNT(DISTINCT p) FROM ProductJpaEntity p " +
+                "JOIN p.productCategories pc " +
+                "JOIN pc.category c " +
+                "WHERE c.slug = :slug";
+        return entityManager.createQuery(sql, Long.class)
+                .setParameter("slug", categorySlug)
+                .getSingleResult();
     }
 }

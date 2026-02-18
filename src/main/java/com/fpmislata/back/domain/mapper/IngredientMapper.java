@@ -37,7 +37,7 @@ public class IngredientMapper {
         return new Ingredient(
                 ingredientDto.id(),
                 ingredientDto.name(),
-                ingredientDto.price(),
+                ingredientDto.basePrice(),
                 ingredientDto.image()
         );
     }

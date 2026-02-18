@@ -66,7 +66,8 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     @Transactional
     public IngredientDto create(IngredientDto ingredientDto) {
-        if(findByName(ingredientDto.name()).getFirst().name().equalsIgnoreCase(ingredientDto.name())){
+        List<IngredientDto> existingIngredients = findByName(ingredientDto.name());
+        if(!existingIngredients.isEmpty()){
             throw new BusinessException("Ingredient with name '"+ingredientDto.name()+"' already exists");
         }
 
@@ -88,8 +89,8 @@ public class IngredientServiceImpl implements IngredientService {
          ingredientRepository.findById(ingredientDto.id())
                 .orElseThrow(() -> new ResourceNotFoundException("No ingredient found with id "+ingredientDto.id()));
 
-         if(ingredientRepository.findByName(ingredientDto.name()).getFirst().name().equalsIgnoreCase(ingredientDto.name())){}
-             if(!ingredientRepository.findByName(ingredientDto.name()).getFirst().id().equals(ingredientDto.id())) {
+        List<IngredientDto> existingIngredients = findByName(ingredientDto.name());
+        if(!existingIngredients.isEmpty() && existingIngredients.getFirst().name().equalsIgnoreCase(ingredientDto.name())){
                  throw new BusinessException("Ingredient with name '" + ingredientDto.name() + "' already exists");
              }
 
