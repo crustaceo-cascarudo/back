@@ -19,12 +19,13 @@ class UserMapperTest {
 
     @Test
     void testFromUserEntitytoJpaEntity() {
-        UserEntity userEntity = new UserEntity(1L, "testUser", "hashedPassword", Role.NORMAL);
+        UserEntity userEntity = new UserEntity(1L, "testUser", "test@gmail.com", "hashedPassword", Role.NORMAL);
         UserJpaEntity jpaEntity = userMapper.fromUserEntitytoJpaEntity(userEntity);
 
         assertNotNull(jpaEntity);
         assertEquals(userEntity.id(), jpaEntity.getId());
         assertEquals(userEntity.name(), jpaEntity.getName());
+        assertEquals(userEntity.email(), jpaEntity.getEmail());
         assertEquals(userEntity.passwordHash(), jpaEntity.getPasswordHash());
         assertEquals(userEntity.role(), jpaEntity.getRole());
     }
@@ -36,12 +37,13 @@ class UserMapperTest {
 
     @Test
     void testFromUserJpaEntitytoUserEntity() {
-        UserJpaEntity jpaEntity = new UserJpaEntity(1L, "testJpa", "jpaHash", Role.ADMIN);
+        UserJpaEntity jpaEntity = new UserJpaEntity(1L, "testJpa", "test@gmail.com", "jpaHash", Role.ADMIN);
         UserEntity userEntity = userMapper.fromUserJpaEntitytoUserEntity(jpaEntity);
 
         assertNotNull(userEntity);
         assertEquals(jpaEntity.getId(), userEntity.id());
         assertEquals(jpaEntity.getName(), userEntity.name());
+        assertEquals(jpaEntity.getEmail(), userEntity.email());
         assertEquals(jpaEntity.getPasswordHash(), userEntity.passwordHash());
         assertEquals(jpaEntity.getRole(), userEntity.role());
     }

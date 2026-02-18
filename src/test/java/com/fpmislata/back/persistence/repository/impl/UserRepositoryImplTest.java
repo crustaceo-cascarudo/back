@@ -1,6 +1,7 @@
 package com.fpmislata.back.persistence.repository.impl;
 
 import com.fpmislata.back.domain.enumerado.Role;
+import com.fpmislata.back.domain.model.Page;
 import com.fpmislata.back.domain.repository.entity.UserEntity;
 import com.fpmislata.back.persistence.dao.UserDao;
 import com.fpmislata.back.persistence.dao.impl.entity.UserJpaEntity;
@@ -60,15 +61,16 @@ class UserRepositoryImplTest {
     // FIND ALL
     @Test
     void findAll_shouldReturnMappedUserEntities() {
-        List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, "user1", "pass1", Role.NORMAL));
+        List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, "user1", "p@p.gmail.com", "pass1", Role.NORMAL));
         when(userDao.findAll(0, 5)).thenReturn(jpaEntities);
         when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntities.get(0)))
-                .thenReturn(new UserEntity(1L, "user1", "pass1", Role.NORMAL));
+                .thenReturn(new UserEntity(1L, "user1", "p@gmail.com", "pass1", Role.NORMAL));
 
-        List<UserEntity> result = userRepository.findAll();
+        Page<UserEntity> result = userRepository.findAll(1, 10);
 
-        assertEquals(1, result.size());
-        assertEquals("user1", result.get(0).name());
+        assertEquals(1, result.data().size());
+        assertEquals("user1", result.data().get(0).name());
+        assertEquals("p@gmail.com", result.data().get(0).email());
         verify(userDao).findAll(0, 5);
         verify(userMapperMock).fromUserJpaEntitytoUserEntity(jpaEntities.get(0));
     }
@@ -76,7 +78,7 @@ class UserRepositoryImplTest {
     @Test
     void findAll_shouldCallUserDaoFindAllWithPagination() {
         when(userDao.findAll(0, 5)).thenReturn(Collections.emptyList());
-        userRepository.findAll();
+        userRepository.findAll(0, 5);
         verify(userDao).findAll(0, 5);
     }
 
@@ -84,10 +86,10 @@ class UserRepositoryImplTest {
     @Test
     void findById_whenUserExists_shouldReturnUserEntity() {
         Long userId = 1L;
-        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "user1", "pass1", Role.NORMAL);
+        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "user1", "p@gmail.com", "pass1", Role.NORMAL);
         when(userDao.findById(userId)).thenReturn(Optional.of(jpaEntity));
         when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntity))
-                .thenReturn(new UserEntity(userId, "user1", "pass1", Role.NORMAL));
+                .thenReturn(new UserEntity(userId, "user1", "p@gmail.com","pass1", Role.NORMAL));
 
         Optional<UserEntity> result = userRepository.findById(userId);
 
@@ -108,10 +110,10 @@ class UserRepositoryImplTest {
     @Test
     void findById_shouldMapJpaEntityToDomainEntity() {
         Long userId = 1L;
-        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "user1", "pass1", Role.NORMAL);
+        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "user1", "p@gmail.com","pass1", Role.NORMAL);
         when(userDao.findById(userId)).thenReturn(Optional.of(jpaEntity));
         when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntity))
-                .thenReturn(new UserEntity(userId, "user1", "pass1", Role.NORMAL));
+                .thenReturn(new UserEntity(userId, "user1", "p@gmail.com", "pass1", Role.NORMAL));
 
         userRepository.findById(userId);
 
@@ -122,10 +124,10 @@ class UserRepositoryImplTest {
     @Test
     void findByName_whenUsersExist_shouldReturnMappedList() {
         String name = "test";
-        List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, name, "pass1", Role.NORMAL));
+        List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, name, "p@gmail.com", "pass1", Role.NORMAL));
         when(userDao.findByName(name)).thenReturn(jpaEntities);
         when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntities.get(0)))
-                .thenReturn(new UserEntity(1L, name, "pass1", Role.NORMAL));
+                .thenReturn(new UserEntity(1L, name, "p@gmail.com","pass1", Role.NORMAL));
 
         List<UserEntity> result = userRepository.findByName(name);
 
@@ -153,27 +155,55 @@ class UserRepositoryImplTest {
         verify(userDao).findByName(name);
     }
 
-    // LOG BY NAME
+    // FIND BY EMAIL
     @Test
-    void logByName_whenUserExists_shouldReturnUserEntity() {
-        String name = "test";
-        List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, name, "pass1", Role.NORMAL));
-        when(userDao.findByName(name)).thenReturn(jpaEntities);
+    void findByEmail_whenUsersExist_shouldReturnMappedList() {
+        String email = "test@gmail.com";
+        List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, "user1", email, "pass1", Role.NORMAL));
+        when(userDao.findByEmail(email)).thenReturn(jpaEntities);
         when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntities.get(0)))
-                .thenReturn(new UserEntity(1L, name, "pass1", Role.NORMAL));
+                .thenReturn(new UserEntity(1L, "user1", email, "pass1", Role.NORMAL));
 
-        UserEntity result = userRepository.logByName(name);
+        List<UserEntity> result = userRepository.findByEmail(email);
 
-        assertNotNull(result);
-        assertEquals(name, result.name());
+        assertEquals(1, result.size());
+        assertEquals(email, result.get(0).email());
+        verify(userDao).findByEmail(email);
+        verify(userMapperMock).fromUserJpaEntitytoUserEntity(jpaEntities.get(0));
     }
 
     @Test
-    void logByName_whenUserDoesNotExist_shouldReturnNull() {
-        String name = "test";
-        when(userDao.findByName(name)).thenReturn(Collections.emptyList());
+    void findByEmail_whenNoUsersExist_shouldReturnEmptyList() {
+        String email = "notfound@example.com";
+        when(userDao.findByEmail(email)).thenReturn(Collections.emptyList());
 
-        UserEntity result = userRepository.logByName(name);
+        List<UserEntity> result = userRepository.findByEmail(email);
+
+        assertTrue(result.isEmpty());
+        verify(userDao).findByEmail(email);
+    }
+
+    // LOG BY NAME
+    @Test
+    void logByEmail_whenUserExists_shouldReturnUserEntity() {
+        String email = "p@gmail.com";
+        List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, email, "p@gmail.com", "pass1", Role.NORMAL));
+        when(userDao.findByEmail(email)).thenReturn(jpaEntities);
+        when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntities.get(0)))
+                .thenReturn(new UserEntity(1L, email, "p@gmail.com", "pass1", Role.NORMAL));
+
+        UserEntity result = userRepository.logByEmail(email);
+
+        assertNotNull(result);
+        assertEquals(email, result.name());
+    }
+
+    @Test
+    void logByEmail_whenUserDoesNotExist_shouldReturnNull() {
+        String email = "test@gamil.com";
+        when(userDao.findByEmail(email)).thenReturn(Collections.emptyList());
+
+        UserEntity result = userRepository.logByEmail(email);
 
         assertNull(result);
     }
@@ -181,14 +211,14 @@ class UserRepositoryImplTest {
     // SAVE
     @Test
     void save_whenIdIsNull_shouldInsertUser() {
-        UserEntity userToSave = new UserEntity(null, "new", "pass", Role.NORMAL);
-        UserJpaEntity jpaEntity = new UserJpaEntity(null, "new", "pass", Role.NORMAL);
-        UserJpaEntity savedJpaEntity = new UserJpaEntity(1L, "new", "pass", Role.NORMAL);
+        UserEntity userToSave = new UserEntity(null, "new", "p@gmail.com", "pass", Role.NORMAL);
+        UserJpaEntity jpaEntity = new UserJpaEntity(null, "new", "p@gmail.com", "pass", Role.NORMAL);
+        UserJpaEntity savedJpaEntity = new UserJpaEntity(1L, "new", "p@gmail.com", "pass", Role.NORMAL);
 
         when(userMapperMock.fromUserEntitytoJpaEntity(userToSave)).thenReturn(jpaEntity);
         when(userDao.insert(jpaEntity)).thenReturn(savedJpaEntity);
         when(userMapperMock.fromUserJpaEntitytoUserEntity(savedJpaEntity))
-                .thenReturn(new UserEntity(1L, "new", "pass", Role.NORMAL));
+                .thenReturn(new UserEntity(1L, "new", "p@gmail.com","pass", Role.NORMAL));
 
         UserEntity result = userRepository.save(userToSave);
 
@@ -200,8 +230,8 @@ class UserRepositoryImplTest {
     @Test
     void save_whenIdExistsAndUserExists_shouldUpdateUser() {
         Long userId = 1L;
-        UserEntity userToSave = new UserEntity(userId, "update", "pass", Role.NORMAL);
-        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "update", "pass", Role.NORMAL);
+        UserEntity userToSave = new UserEntity(userId, "update", "p@gmail.com", "pass", Role.NORMAL);
+        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "update", "p@gmail.com", "pass", Role.NORMAL);
 
         when(userDao.findById(userId)).thenReturn(Optional.of(new UserJpaEntity()));
         when(userMapperMock.fromUserEntitytoJpaEntity(userToSave)).thenReturn(jpaEntity);
@@ -216,15 +246,15 @@ class UserRepositoryImplTest {
     @Test
     void save_whenIdExistsAndUserDoesNotExist_shouldInsertUser() {
         Long userId = 1L;
-        UserEntity userToSave = new UserEntity(userId, "new", "pass", Role.NORMAL);
-        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "new", "pass", Role.NORMAL);
-        UserJpaEntity savedJpaEntity = new UserJpaEntity(userId, "new", "pass", Role.NORMAL);
+        UserEntity userToSave = new UserEntity(userId, "new", "p@gmail.com", "pass", Role.NORMAL);
+        UserJpaEntity jpaEntity = new UserJpaEntity(userId, "new", "p@gmail.com", "pass", Role.NORMAL);
+        UserJpaEntity savedJpaEntity = new UserJpaEntity(userId, "new", "p@gmail.com", "pass", Role.NORMAL);
     
         when(userDao.findById(userId)).thenReturn(Optional.empty());
         when(userMapperMock.fromUserEntitytoJpaEntity(userToSave)).thenReturn(jpaEntity);
         when(userDao.insert(jpaEntity)).thenReturn(savedJpaEntity);
         when(userMapperMock.fromUserJpaEntitytoUserEntity(savedJpaEntity))
-                .thenReturn(new UserEntity(userId, "new", "pass", Role.NORMAL));
+                .thenReturn(new UserEntity(userId, "new", "p@gmail.com","pass", Role.NORMAL));
     
         UserEntity result = userRepository.save(userToSave);
     
@@ -235,8 +265,8 @@ class UserRepositoryImplTest {
 
     @Test
     void save_shouldMapDomainEntityToJpaEntity() {
-        UserEntity userToSave = new UserEntity(null, "new", "pass", Role.NORMAL);
-        UserJpaEntity jpaEntity = new UserJpaEntity(null, "new", "pass", Role.NORMAL);
+        UserEntity userToSave = new UserEntity(null, "new", "p@gmail.com","pass", Role.NORMAL);
+        UserJpaEntity jpaEntity = new UserJpaEntity(null, "new","p@gmail.com", "pass", Role.NORMAL);
 
         when(userMapperMock.fromUserEntitytoJpaEntity(userToSave)).thenReturn(jpaEntity);
         when(userDao.insert(jpaEntity)).thenReturn(new UserJpaEntity());
@@ -262,10 +292,10 @@ class UserRepositoryImplTest {
     @Test
     void findByToken_whenTokenExists_shouldReturnUserEntity() {
         String token = "token";
-        UserJpaEntity jpaEntity = new UserJpaEntity(1L, "user1", "pass1", Role.NORMAL);
+        UserJpaEntity jpaEntity = new UserJpaEntity(1L, "user1","p@gmail.com", "pass1", Role.NORMAL);
         when(userDao.findByToken(token)).thenReturn(jpaEntity);
         when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntity))
-                .thenReturn(new UserEntity(1L, "user1", "pass1", Role.NORMAL));
+                .thenReturn(new UserEntity(1L, "user1","p@gmail.com", "pass1", Role.NORMAL));
 
         UserEntity result = userRepository.findByToken(token);
 

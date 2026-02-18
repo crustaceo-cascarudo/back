@@ -20,7 +20,7 @@ class UserMapperTest {
 
     @Test
     void testFromUserToUserDto() {
-        User user = new User(1L, "testUser", "hashedPassword", Role.NORMAL);
+        User user = new User(1L, "testUser", "test@gmail.com", "hashedPassword", Role.NORMAL);
         UserDto userDto = userMapper.fromUserToUserDto(user);
 
         assertNotNull(userDto);
@@ -38,7 +38,7 @@ class UserMapperTest {
 
     @Test
     void testFromUserDtoToUser() {
-        UserDto userDto = new UserDto(1L, "testUserDto", "plainPassword", "hashedPasswordDto", Role.ADMIN);
+        UserDto userDto = new UserDto(1L, "testUserDto", "test@gmail.com", "plainPassword", "hashedPasswordDto", Role.ADMIN);
         User user = userMapper.fromUserDtoToUser(userDto);
 
         assertNotNull(user);
@@ -55,7 +55,7 @@ class UserMapperTest {
 
     @Test
     void testFromUserToUserEntity() {
-        User user = new User(2L, "entityUser", "hashedEntityPassword", Role.NORMAL);
+        User user = new User(2L, "entityUser", "test@gmail.com", "hashedEntityPassword", Role.NORMAL);
         UserEntity userEntity = userMapper.fromUserToUserEntity(user);
 
         assertNotNull(userEntity);
@@ -72,7 +72,7 @@ class UserMapperTest {
 
     @Test
     void testFromUserEntityToUser() {
-        UserEntity userEntity = new UserEntity(3L, "userFromEntity", "hashedUserEntityPassword", Role.ADMIN);
+        UserEntity userEntity = new UserEntity(3L, "userFromEntity", "test@gmail.com", "hashedUserEntityPassword", Role.ADMIN);
         User user = userMapper.fromUserEntityToUser(userEntity);
 
         assertNotNull(user);

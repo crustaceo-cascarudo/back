@@ -14,10 +14,11 @@ class UserDtoTest {
         String passwordHash = "hashedPassword";
         Role role = Role.NORMAL;
 
-        UserDto userDto = new UserDto(id, name, plainPassword, passwordHash, role);
+        UserDto userDto = new UserDto(id, name, "test@gmail.com", plainPassword, passwordHash, role);
 
         assertEquals(id, userDto.id());
         assertEquals(name, userDto.name());
+        assertEquals("test@gmail.com", userDto.email());
         assertEquals(plainPassword, userDto.plainPassword());
         assertEquals(passwordHash, userDto.passwordHash());
         assertEquals(role, userDto.role());
@@ -25,21 +26,21 @@ class UserDtoTest {
 
     @Test
     void testUserDtoEquality() {
-        UserDto userDto1 = new UserDto(1L, "testUser", "password123", "hashedPassword", Role.NORMAL);
-        UserDto userDto2 = new UserDto(1L, "testUser", "password123", "hashedPassword", Role.NORMAL);
-        UserDto userDto3 = new UserDto(2L, "anotherUser", "password456", "anotherHash", Role.ADMIN);
+        UserDto userDto1 = new UserDto(1L, "testUser", "test@gmail.com", "password123", "hashedPassword", Role.NORMAL);
+        UserDto userDto2 = new UserDto(1L, "testUser", "test@gmail.com", "password123", "hashedPassword", Role.NORMAL);
+        UserDto userDto3 = new UserDto(2L, "anotherUser", "test@gmail.com", "password456", "anotherHash", Role.ADMIN);
 
         assertEquals(userDto1, userDto2);
         assertNotEquals(userDto1, userDto3);
-        assertNotEquals(userDto1, null);
-        assertNotEquals(userDto1, new Object());
+        assertNotEquals(null, userDto1);
+        assertNotEquals(new Object(), userDto1);
     }
 
     @Test
     void testUserDtoHashCode() {
-        UserDto userDto1 = new UserDto(1L, "testUser", "password123", "hashedPassword", Role.NORMAL);
-        UserDto userDto2 = new UserDto(1L, "testUser", "password123", "hashedPassword", Role.NORMAL);
-        UserDto userDto3 = new UserDto(2L, "anotherUser", "password456", "anotherHash", Role.ADMIN);
+        UserDto userDto1 = new UserDto(1L, "testUser", "test@gmail.com", "password123", "hashedPassword", Role.NORMAL);
+        UserDto userDto2 = new UserDto(1L, "testUser", "test@gmail.com", "password123", "hashedPassword", Role.NORMAL);
+        UserDto userDto3 = new UserDto(2L, "anotherUser", "test@gmail.com", "password456", "anotherHash", Role.ADMIN);
 
         assertEquals(userDto1.hashCode(), userDto2.hashCode());
         assertNotEquals(userDto1.hashCode(), userDto3.hashCode());
@@ -47,16 +48,17 @@ class UserDtoTest {
 
     @Test
     void testUserDtoToString() {
-        UserDto userDto = new UserDto(1L, "testUser", "password123", "hashedPassword", Role.NORMAL);
-        String expectedToString = "UserDto[id=1, name=testUser, plainPassword=password123, passwordHash=hashedPassword, role=NORMAL]";
+        UserDto userDto = new UserDto(1L, "testUser", "test@gmail.com", "password123", "hashedPassword", Role.NORMAL);
+        String expectedToString = "UserDto[id=1, name=testUser, email=test@gmail.com, plainPassword=password123, passwordHash=hashedPassword, role=NORMAL]";
         assertEquals(expectedToString, userDto.toString());
     }
 
     @Test
     void testUserDtoWithNullValues() {
-        UserDto userDto = new UserDto(null, "name", null, null, Role.NORMAL);
+        UserDto userDto = new UserDto(null, "name", "test@gmail.com", null, null, Role.NORMAL);
         assertNull(userDto.id());
         assertEquals("name", userDto.name());
+        assertEquals("test@gmail.com", userDto.email());
         assertNull(userDto.plainPassword());
         assertNull(userDto.passwordHash());
         assertEquals(Role.NORMAL, userDto.role());
