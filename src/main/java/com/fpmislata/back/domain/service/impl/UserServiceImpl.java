@@ -56,18 +56,18 @@ public class UserServiceImpl implements UserService {
     return UserMapper.getInstance().fromUserToUserDto(UserMapper.getInstance().fromUserEntityToUser(userEntity));
   }
 
-  @Override
-  @Transactional
-  public void delete(Long id) {
-    Optional<UserDto> existingUser = findById(id);
-    if (existingUser.isEmpty()) {
-      throw new IllegalArgumentException("User with id " + id + " does not exist.");
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Optional<UserDto> existingUser = findById(id);
+        if (existingUser.isEmpty()) {
+            throw new IllegalArgumentException("User with id " + id + " does not exist.");
+        }
+        if (existingUser.get().role().equals("ADMIN")) {
+            throw new IllegalArgumentException("Cannot delete an ADMIN user.");
+        }
+        userRepository.delete(id);
     }
-    if (existingUser.get().role().equals("ADMIN")) {
-      throw new IllegalArgumentException("Cannot delete an ADMIN user.");
-    }
-    userRepository.delete(id);
-  }
 
   @Override
   @Transactional
@@ -81,12 +81,12 @@ public class UserServiceImpl implements UserService {
       throw new IllegalArgumentException("Incorrect password for user " + email + ".");
     }
 
-    // Crear token de sesión
-    String sessionToken = userRepository.createSessionToken(existingUsers.get(0).id());
+        // Crear token de sesión
+        String sessionToken = userRepository.createSessionToken(existingUsers.get(0).id());
 
-    // Devolver DTO con usuario y token
-    return sessionToken;
-  }
+        // Devolver DTO con usuario y token
+        return sessionToken;
+    }
 
   @Override
   @Transactional
