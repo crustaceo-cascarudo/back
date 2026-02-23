@@ -578,7 +578,7 @@ class UserServiceImplTest {
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.logByEmail(email, plainPassword));
 
-        assertEquals("User with name " + email + " does not exist.", exception.getMessage());
+        assertEquals("User with email " + email + " does not exist.", exception.getMessage());
         verify(userRepository, times(1)).findByEmail(email);
         verify(passwordEncoderService, never()).verify(anyString(), anyString());
         verify(userRepository, never()).createSessionToken(anyLong());

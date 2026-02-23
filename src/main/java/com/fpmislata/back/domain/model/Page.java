@@ -35,7 +35,7 @@ public record Page<T>(
     }
 
     private static int validatePageSize(int pageSize) {
-        if (pageSize <= 0) {
+        if (pageSize < 0) {
             throw new RuntimeException("Page size must be greater than zero");
         }
         return pageSize;

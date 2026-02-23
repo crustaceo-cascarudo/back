@@ -62,24 +62,24 @@ class UserRepositoryImplTest {
     @Test
     void findAll_shouldReturnMappedUserEntities() {
         List<UserJpaEntity> jpaEntities = List.of(new UserJpaEntity(1L, "user1", "p@p.gmail.com", "pass1", Role.NORMAL));
-        when(userDao.findAll(0, 5)).thenReturn(jpaEntities);
-        when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntities.get(0)))
+        when(userDao.findAll(1, 5)).thenReturn(jpaEntities);
+        when(userMapperMock.fromUserJpaEntitytoUserEntity(jpaEntities.getFirst()))
                 .thenReturn(new UserEntity(1L, "user1", "p@gmail.com", "pass1", Role.NORMAL));
 
-        Page<UserEntity> result = userRepository.findAll(1, 10);
+        Page<UserEntity> result = userRepository.findAll(1, 5);
 
         assertEquals(1, result.data().size());
         assertEquals("user1", result.data().get(0).name());
         assertEquals("p@gmail.com", result.data().get(0).email());
-        verify(userDao).findAll(0, 5);
+        verify(userDao).findAll(1, 5);
         verify(userMapperMock).fromUserJpaEntitytoUserEntity(jpaEntities.get(0));
     }
 
     @Test
     void findAll_shouldCallUserDaoFindAllWithPagination() {
-        when(userDao.findAll(0, 5)).thenReturn(Collections.emptyList());
-        userRepository.findAll(0, 5);
-        verify(userDao).findAll(0, 5);
+        when(userDao.findAll(1, 5)).thenReturn(Collections.emptyList());
+        userRepository.findAll(1, 5);
+        verify(userDao).findAll(1, 5);
     }
 
     // FIND BY ID
